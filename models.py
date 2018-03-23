@@ -9,19 +9,16 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-#
+
 class Classes(models.Model):
     cid = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, null=True)
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         managed = False
         db_table = 'Classes'
 
-#
+
 # class Enroll(models.Model):
 #     sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', blank=True, null=True)
 #     cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=True, null=True)

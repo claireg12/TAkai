@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "buoyant-mason-198603",
+  "private_key_id": "398eb7a016fa4ddd71c043b1b10a70cd397e5299",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDC2zfEZZser61P\nFe0rQUAocfNvEw6RTQ12GZy9Kv5JA4fYu/+vbpQCFSArMKKPNad9CxeGXrrNKU9O\nf9tP576nwV4KaDo0LJtng6GBN7PWOOSilN7w90Fg5OG4O6qNWi5RbApRARYe9IQw\nfgOgvj9lqlziVN3EOVP8R9pRBhPdlKbE2l/qs+hxDoII7NJTNLcgVFgJ+xRj8GZA\nFBDZg8P19/Zj7rOvGpkR9lkDeW1xAgOvM6vSUrA8sUMyZmoLeN0vxqRO1OIwjxqS\nUvNdPryE6NGnbn3Us3QiwWO8+svMM6JFLmF33Uxfu0Lvknzs4g1ZSG5yrq8bmAui\nFouST76fAgMBAAECggEAXoWWvMeJAs63ZGi/fr8NT1FPhC8bXvKguAxekwj7BxIW\nYNV5h3E9jPEQhML36D5fu/GYfM8REJqcZPjyuwUw4BGV+7hpm4uT6xfYTWVm8GDy\nz8clioB2j3kX4ZXX+u+nDko5iufbAjMcuKU4P05qVHfazNPcK+afTf7Q8YLgOhia\nsEiI5rB1meoirBLhYodzQTZg/izwYHLz994sycn6oP6oTHQhKM3OU2NnBa/pE9RF\nX6dJlT7bUvasvg98pB0QaguPeohcvVFNzu8JsoKLJviiiFWfqyC0iB8O00c+ANmP\nT8yyX4MbQ2zU0Waw6EIfgsOvFTu7NaKZReBGe/cEmQKBgQD8LafZZpYj/NlS4zEg\nuVNEjF5r5AgfQ+Au1g/09lOWTw27cqx+FHNNw2y+rI6ZaPDFeadk2yBJY+chMesR\ny2EU2bRNj+7UP5ZDw108x+mqfg2pRgM8Hnf1xY+i1beGZtUsX7q4QGRg3mwpHDq/\nU0SPmoBQepLgDHKiOEFp1/XJwwKBgQDFzy1cvMeLwrsP1lSFLgBa7BM3VLHla2in\nnMMo1Aj7pUcpsV+7uoizibnsVp6xYBAz3Lj3ml8AHxCH7PoBob/Dcomqf/455Rom\n0zyq5xSORi7y74vF5azearGc8BJfmz6OCwqOoiY0nD6ApbJQT4f13d8HJhcmnr/k\nuhzMA6JN9QKBgD7EPlrmJcifTphK5Bd5CTiul3HTOBJQGqSNszsNdJCc7JYTXMuk\n224njhGHcZbNf+Am/3si705VB1pDynaLYIaICVCk2pUJnqUPI03VlFtTNKNFQdjc\n3I7XtYCaISvavIRm71qc7F8P/WveEuE8IHx9wCJH3/bUIlQuHFnz3sFxAoGBAJc5\nn21xqYBwvEAMVIuIsp7QMpSvfF1vcxAJKa5yA/gW0EPQpebIYbAYj/pd8m6aiWiM\nyyAIda6LEUFJa4yJ0yghzZt6xKoQO6EJBy2FAlMO1t/FQO9nenSDzwuzAejzr6w6\nRrTqxBiehq4lfyAk3UWbfOFjPnm5De1YV6Gk+ZVtAoGBALME1+qVRtTBWNMRCQeX\n8MxYCKIqnx25bUkkgeFvIPnCiFelL890mc9lVqq2a6jPX38nwUMczE3PcVQK3Eet\nauko2LPDVwTMKZ1WMjDOCW7ZF9Q1Uea8S+cL5WNqDa0kLLGiLjdZxf5UqmWSwq8t\nse2TWfjaMOpHcPS4wTlv2sJs\n-----END PRIVATE KEY-----\n",
+  "client_email": "manon2@buoyant-mason-198603.iam.gserviceaccount.com",
+  "client_id": "112145616787743534396",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/manon2%40buoyant-mason-198603.iam.gserviceaccount.com"
+}

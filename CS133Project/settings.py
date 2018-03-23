@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'takai.apps.TakaiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,9 +80,9 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'HOST': '/cloudsql/buoyant-mason-198603:us-west1:takai',
-            'NAME': 'takaidb',
-            'USER': 'manon',
-            'PASSWORD': 'takai12',
+            'NAME': 'takaiDB',
+            'USER': 'manon2@buoyant-mason-198603.iam.gserviceaccount.com',
+            'PASSWORD': '',
         }
     }
 else:
@@ -96,7 +97,7 @@ else:
             'ENGINE': 'django.db.backends.mysql',
             'HOST': '127.0.0.1',
             'PORT': '3307',
-            'NAME': 'takaidb',
+            'NAME': 'takaiDB',
             'USER': 'manon',
             'PASSWORD': 'takai12',
         }
