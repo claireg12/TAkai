@@ -1,0 +1,9 @@
+{% if ordered_classes %}
+    <ul>
+    {% for classes in ordered_classes %}
+        <li><a href="/takai/{{ classes.cid }}/">{{ classes.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No classes are available.</p>
+{% endif %}

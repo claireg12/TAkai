@@ -8,9 +8,9 @@ urlpatterns = [
                
     # this doesn't work
     # ex: /takai/5/
-    url('<int:cid_id>/', views.detail, name='detail'),
+    url(r'^(?P<cid>[0-9]+)/$', views.detail, name='detail'),
     # ex: /takai/5/results/
-    url('<int:cid_id>/results/', views.results, name='results'),
+    url(r'^(?P<cid>[0-9]+)/results/$', views.results, name='results'),
     # ex: /takai/5/vote/
-    url('<int:cid_id>/vote/', views.vote, name='vote'),
+    url(r'^(?P<cid>[0-9]+)/vote/$', views.vote, name='vote'),
 ]
