@@ -12,13 +12,5 @@ urlpatterns = [
                
     # ex: /takai/2018Spring/140/
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/$', views.session, name='session'),
-           
-#    # ex: /takai/5/
-#    url(r'^(?P<cid>[0-9]+)/$', views.detail, name='detail'),
-
-    
-    
-               
-    #url(r'^(?P<year>[0-9]{4})/(?P<semester>[a-z]{4,6})/(?P<cid>[0-9]+)/$', views.session, name='session'),
 
 ]

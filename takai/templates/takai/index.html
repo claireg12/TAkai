@@ -1,9 +1,0 @@
-{% if current_classes %}
-    <ul>
-    {% for classes in current_classes %}
-        <li><a href="{% url 'session' year semester classes.cid %}">{{ classes.name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No classes are available.</p>
-{% endif %}

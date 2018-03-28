@@ -1,0 +1,9 @@
+<h1>TAkai</h1>
+<h2>CS{{some_class.cid}}: {{ some_class.name }}</h2>
+
+<ul>
+{% for session in some_class.session_set.all %}
+    <li>{{ session.times }}</li>
+    <li>Classroom: {{ session.classroom }}</li>
+{% endfor %}
+</ul>
