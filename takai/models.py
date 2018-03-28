@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-#
 class Classes(models.Model):
     cid = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, null=True)
