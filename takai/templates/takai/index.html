@@ -1,7 +1,7 @@
-{% if ordered_classes %}
+{% if current_classes %}
     <ul>
-    {% for classes in ordered_classes %}
-        <li><a href="/takai/{{ classes.cid }}/">{{ classes.name }}</a></li>
+    {% for classes in current_classes %}
+        <li><a href="{% url 'session' year semester classes.cid %}">{{ classes.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
