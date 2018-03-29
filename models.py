@@ -19,21 +19,69 @@ class Classes(models.Model):
         db_table = 'Classes'
 
 
-# class Enroll(models.Model):
-#     sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', blank=True, null=True)
-#     cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=True, null=True)
-#     semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=True, null=True)
-#     year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=True, null=True)
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'Enroll'
+class Enroll(models.Model):
+    sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', blank=True, null=True)
+    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=True, null=True)
+    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=True, null=True)
+    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Enroll'
+
+
+class Enroll2(models.Model):
+    sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', primary_key=True)
+    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid')
+    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester')
+    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year')
+
+    class Meta:
+        managed = False
+        db_table = 'Enroll2'
+        unique_together = (('sid', 'cid', 'semester', 'year'),)
+
+
+class Mentor(models.Model):
+    sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', blank=True, null=True)
+    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=True, null=True)
+    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=True, null=True)
+    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Mentor'
+
+
+class Mentorsessions(models.Model):
+    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=True, null=True)
+    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=True, null=True)
+    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=True, null=True)
+    time = models.CharField(primary_key=True, max_length=255)
+    day = models.CharField(max_length=255, blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Mentorsessions'
+
+
+class Professors(models.Model):
+    fid = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
+    office = models.CharField(max_length=255, blank=True, null=True)
+    officehours = models.CharField(db_column='officeHours', max_length=255, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Professors'
 
 
 class Session(models.Model):
     cid = models.ForeignKey(Classes, models.DO_NOTHING, db_column='cid', primary_key=True)
     semester = models.CharField(max_length=50)
-    year = models.IntegerField()
+    year = models.TextField()  # This field type is a guess.
     classroom = models.CharField(max_length=255, blank=True, null=True)
     times = models.CharField(max_length=255, blank=True, null=True)
 
@@ -46,12 +94,22 @@ class Session(models.Model):
 class Students(models.Model):
     sid = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, null=True)
-    gradyear = models.IntegerField(db_column='gradYear', blank=True, null=True)  # Field name made lowercase.
+    gradyear = models.TextField(db_column='gradYear', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
     email = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'Students'
+
+
+class Ta(models.Model):
+    sid = models.ForeignKey(Students, models.DO_NOTHING, db_column='sid', blank=True, null=True)
+    bio = models.CharField(max_length=1500, blank=True, null=True)
+    picture = models.CharField(max_length=300, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'TA'
 
 
 class AuthGroup(models.Model):
