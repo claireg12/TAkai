@@ -1,12 +1,13 @@
-<h1>TAkai</h1>
+<h1><a href="/takai/">TAkai</a></li>
 <h2>{{semester}} {{year}} Courses</h2>
 
 {% if current_classes %}
     <ul>
     {% for classes in current_classes %}
-        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid }}: {{classes.name}}  </a></li>
+        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid_session_set }}: {{classes.name}}  </a></li>
     {% endfor %}
     </ul>
 {% else %}
     <p>No classes are available.</p>
 {% endif %}
+

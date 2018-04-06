@@ -9,36 +9,70 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+
 class Classes(models.Model):
     cid = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
+    name = models.CharField(max_length=255, blank=False, null=False)
+    
     class Meta:
         managed = False
         db_table = 'Classes'
 
-#
-# class Enroll(models.Model):
-#     sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', blank=True, null=True)
-#     cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=True, null=True)
-#     semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=True, null=True)
-#     year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=True, null=True)
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'Enroll'
+# Added primary key ???
+class Enroll(models.Model):
+    sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', blank=False, null=False, related_name='sid_enroll_set', primary_key=True)
+    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=False, null=False, related_name='cid_enroll_set')
+    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=False, null=False, related_name='semester_enroll_set')
+    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=False, null=False, related_name='year_enroll_set')
+    
+    class Meta:
+        managed = False
+        db_table = 'Enroll'
+
+# Added primary key ???
+class Mentor(models.Model):
+    sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', blank=False, null=False, related_name='sid_mentor_set', primary_key=True)
+    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=False, null=False, related_name='cid_mentor_set')
+    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=False, null=False, related_name='semester_mentor_set')
+    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=False, null=False, related_name='year_mentor_set')
+    
+    class Meta:
+        managed = False
+        db_table = 'Mentor'
+
+
+class Mentorsessions(models.Model):
+    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=False, null=False, related_name='cid_mentorsessions_set')
+    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=False, null=False, related_name='semester_mentorsessions_set')
+    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=False, null=False, related_name='year_mentorsessions_set')
+    time = models.CharField(primary_key=True, max_length=255)
+    day = models.CharField(max_length=255, blank=False, null=False)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    
+    class Meta:
+        managed = False
+        db_table = 'Mentorsessions'
+
+
+class Professors(models.Model):
+    fid = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=False, null=False)
+    email = models.CharField(max_length=255, blank=False, null=False)
+    office = models.CharField(max_length=255, blank=False, null=False)
+    officehours = models.CharField(db_column='officeHours', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    
+    class Meta:
+        managed = False
+        db_table = 'Professors'
 
 
 class Session(models.Model):
     cid = models.ForeignKey(Classes, models.DO_NOTHING, db_column='cid', primary_key=True)
     semester = models.CharField(max_length=50)
-    year = models.IntegerField()
-    classroom = models.CharField(max_length=255, blank=True, null=True)
-    times = models.CharField(max_length=255, blank=True, null=True)
-
+    year = models.TextField()  # This field type is a guess.
+    classroom = models.CharField(max_length=255, blank=False, null=False)
+    times = models.CharField(max_length=255, blank=False, null=False)
+    
     class Meta:
         managed = False
         db_table = 'Session'
@@ -47,18 +81,28 @@ class Session(models.Model):
 
 class Students(models.Model):
     sid = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
-    gradyear = models.IntegerField(db_column='gradYear', blank=True, null=True)  # Field name made lowercase.
-    email = models.CharField(max_length=255, blank=True, null=True)
-
+    name = models.CharField(max_length=255, blank=False, null=False)
+    gradyear = models.TextField(db_column='gradYear', blank=False, null=False)  # Field name made lowercase. This field type is a guess.
+    email = models.CharField(max_length=255, blank=False, null=False)
+    
     class Meta:
         managed = False
         db_table = 'Students'
 
+# Added primary key????
+class Ta(models.Model):
+    sid = models.ForeignKey(Students, models.DO_NOTHING, db_column='sid', blank=False, null=False, primary_key=True)
+    bio = models.CharField(max_length=1500, blank=True, null=True)
+    picture = models.CharField(max_length=300, blank=True, null=True)
+    
+    class Meta:
+        managed = False
+        db_table = 'TA'
+
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=80)
-
+    
     class Meta:
         managed = False
         db_table = 'auth_group'
@@ -67,7 +111,7 @@ class AuthGroup(models.Model):
 class AuthGroupPermissions(models.Model):
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
-
+    
     class Meta:
         managed = False
         db_table = 'auth_group_permissions'
@@ -78,7 +122,7 @@ class AuthPermission(models.Model):
     name = models.CharField(max_length=255)
     content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
     codename = models.CharField(max_length=100)
-
+    
     class Meta:
         managed = False
         db_table = 'auth_permission'
@@ -96,7 +140,7 @@ class AuthUser(models.Model):
     is_staff = models.IntegerField()
     is_active = models.IntegerField()
     date_joined = models.DateTimeField()
-
+    
     class Meta:
         managed = False
         db_table = 'auth_user'
@@ -105,7 +149,7 @@ class AuthUser(models.Model):
 class AuthUserGroups(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-
+    
     class Meta:
         managed = False
         db_table = 'auth_user_groups'
@@ -115,7 +159,7 @@ class AuthUserGroups(models.Model):
 class AuthUserUserPermissions(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
-
+    
     class Meta:
         managed = False
         db_table = 'auth_user_user_permissions'
@@ -130,7 +174,7 @@ class DjangoAdminLog(models.Model):
     change_message = models.TextField()
     content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-
+    
     class Meta:
         managed = False
         db_table = 'django_admin_log'
@@ -139,7 +183,7 @@ class DjangoAdminLog(models.Model):
 class DjangoContentType(models.Model):
     app_label = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
-
+    
     class Meta:
         managed = False
         db_table = 'django_content_type'
@@ -150,7 +194,7 @@ class DjangoMigrations(models.Model):
     app = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     applied = models.DateTimeField()
-
+    
     class Meta:
         managed = False
         db_table = 'django_migrations'
@@ -160,7 +204,7 @@ class DjangoSession(models.Model):
     session_key = models.CharField(primary_key=True, max_length=40)
     session_data = models.TextField()
     expire_date = models.DateTimeField()
-
+    
     class Meta:
         managed = False
         db_table = 'django_session'
