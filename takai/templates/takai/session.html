@@ -1,13 +1,23 @@
-<h1><a href="/takai/">TAkai</a></li>
-<h2>CS{{some_class.cid}}: {{ some_class.name }}</h2>
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- <link rel="stylesheet" type="text/css" href="session.css"> -->
+</head>
+
+<body>
+<h1><a href="/takai/" style="text-decoration: none">TAkai</a></h1>
+<h2><center>CS{{some_class.cid}}: {{ some_class.name }}</center></h2>
 
 <ul>
 {% for session in some_class.session_set.all %}
-    <li>Lectures: {{ session.times }}</li>
-    <li>Classroom: {{ session.classroom }}</li>
-    <li>Instructor: </li>
-    <li>Office Hours: </li>
-    <li>Mentor Sessions: </li>
-    <li>TAs: <a href="/takai/010314573/">Alia Buckner</a> </li>
+    <li><b>Lectures:</b> {{ session.times }}</li>
+    <li><b>Classroom:</b> {{ session.classroom }}</li>
+    <li><b>Instructor:</b> </li>
+    <li><b>Office Hours:</b> </li>
+    <li><b>Mentor Sessions:</b> </li>
+    <li><b>TAs:</b> <a href="/takai/010314573/">Alia Buckner</a> </li>
 {% endfor %}
 </ul>
+
+</body>
+</html>
