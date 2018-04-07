@@ -35,6 +35,20 @@ def profile(request, sid):
 def search(request):
     return render(request, 'takai/search.html')
 
+# Search page
+def search(request):
+    return render(request, 'takai/search.html')
 
 #response = "You're looking at the %s."
 #return HttpResponse(response % id)
+
+#def enroll(request, classes_id):
+#    aclass = get_object_or_404(Classes, pk=classes.id)
+#        selected_choice = classes.cid_session_set.get(pk=request.POST['choice'])
+#   else:
+#    selected_choice.votes += 1
+#        selected_choice.save()
+#        # Always return an HttpResponseRedirect after successfully dealing
+#        # with POST data. This prevents data from being posted twice if a
+#        # user hits the Back button.
+#        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
