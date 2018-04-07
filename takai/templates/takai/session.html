@@ -5,7 +5,9 @@
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
     <li>Classroom: {{ session.classroom }}</li>
-    <li>Instructor: </li>
+    {% for oneteach in teach %}
+        <li>Instructor: {{ oneteach }} </li>
+    {% endfor %}
     <li>Office Hours: </li>
     <li>Mentor Sessions: </li>
     <li>TAs: <a href="/takai/010314573/">Alia Buckner</a> </li>
