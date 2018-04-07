@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 LOGIN_REDIRECT_URL = '/takai/'
+LOGIN_URL='/takai/login/'
 
 # Application definition
 
