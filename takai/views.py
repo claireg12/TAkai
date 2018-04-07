@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, login
 
 
 
-from .models import Classes, Students
+from .models import Classes, Students, Teach, Professors
 
 
 
@@ -33,9 +33,17 @@ def semester(request, year, semester):
 def session(request, year, semester, cid):
     try:
         some_class = Classes.objects.get(pk=cid)
+        teach = Teach.objects.filter(cid=cid, semester=semester, year=year).values_list('fid', flat=True)
+        # this_teach = teach[0].professors_fid
+        # names = Professors.objects.filter(fid=this_teach)
+        # prof = teach.filter(professors_fid=teach.fid)
+        # profs = Professors.filter(fid=)
+        context = {'some_class': some_class, 'teach': teach}
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
-    return render(request, 'takai/session.html', {'some_class': some_class})
+    except Teach.DoesNotExist:
+        raise Http404("Teach entry does not exist")
+    return render(request, 'takai/session.html', context)
 
 # Profile page
 @login_required
