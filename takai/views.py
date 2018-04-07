@@ -5,8 +5,10 @@ from django.http import Http404
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from django.contrib.auth.models import Permission, User
+from django.contrib.auth import authenticate, login
 
 
 
@@ -20,7 +22,11 @@ def semester(request, year, semester):
     ordered_classes = Classes.objects.order_by('cid')
     current_classes = ordered_classes.filter(session__semester=semester, session__year=year)
     context = {'current_classes': current_classes, 'year': year, 'semester':semester}
-    return render(request, 'takai/semester.html', context)
+    
+    if request.user.has_perm('professors.can_add_professors'):
+        return render(request, 'takai/semester_prof.html', context)
+    else:
+        return render(request, 'takai/semester.html', context)
 
 # Class page
 @login_required

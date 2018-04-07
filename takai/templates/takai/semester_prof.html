@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+.button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 25px;
+    text-align: right;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: green;
+}
+</style>
+</head>
+
+<body>
+<!-- Logout Button -->
+<div style="float:right"> <a href="/takai/logout/">Logout</a> </div>
+<!-- Takai Header -->
+<h1><a href="/takai/">TAkai</a></h1>
+<!-- Search Bar -->
+<form action="/takai/search/" method="get">
+    <input id="ta_search" type="text" name="name_field" value="Search for TA(s)">
+   <input type="submit" value="Search">
+</form>
+<!-- ie Spring 2018 Courses -->
+<h2>{{semester}} {{year}} Courses</h2>
+
+<!-- lists courses available that semester -->
+{% if current_classes %}
+    <ul>
+    {% for classes in current_classes %}
+        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid_session_set }}: {{classes.name}}  </a> 
+        	<button class="button">Teach</button> 
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No classes are available.</p>
+{% endif %}
+</body>
+</html>
