@@ -16,7 +16,7 @@
     background: green;
 }
 </style>
-	
+
 </head>
 
 <body>
@@ -30,8 +30,8 @@
 {% if current_classes %}
     <ul>
     {% for classes in current_classes %}
-        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid_session_set }}: {{classes.name}}  </a> 
-        	<button class="button">Enroll</button> 
+        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid }}: {{classes.name}}  </a>
+        	<button class="button">Enroll</button>
         </li>
     {% endfor %}
     </ul>
