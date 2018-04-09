@@ -8,7 +8,11 @@ from .models import Classes, Session, Students, Enroll, Mentor, Mentorsessions, 
 admin.site.register(Classes)
 admin.site.register(Session)
 admin.site.register(Students)
-admin.site.register(Enroll)
+#admin.site.register(Enroll)
+@admin.register(Enroll)
+class EnrollAdmin(admin.ModelAdmin):
+	list_display = ('student','session')
+
 admin.site.register(Mentor)
 admin.site.register(Mentorsessions)
 admin.site.register(Professors)

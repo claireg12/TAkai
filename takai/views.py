@@ -2,11 +2,16 @@
 from __future__ import unicode_literals
 
 from django.http import Http404
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse
 
-from .models import Classes, Students
+import pdb
+
+from .models import Classes, Students, Enroll, Session
 
 # Home page
 def semester(request, year, semester):
@@ -21,7 +26,7 @@ def session(request, year, semester, cid):
         some_class = Classes.objects.get(pk=cid)
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
-    return render(request, 'takai/session.html', {'some_class': some_class})
+    return render(request, 'takai/session.html', {'some_class': some_class, 'year': year, 'semester': semester})
 
 # Profile page
 def profile(request, sid):
@@ -34,6 +39,32 @@ def profile(request, sid):
 # Search page
 def search(request):
     return render(request, 'takai/search.html')
+
+def enroll(request, year, semester, cid):
+    #student = get_object_or_404(Students, pk=request.POST['student_id_field'])
+    #session = get_object_or_404(Session, pk=cid)
+    student = Students.objects.get(pk=request.POST['student_id_field'])
+    session = Session.objects.get(pk=cid)
+    #pdb.set_trace()
+    try: 
+        returned_student_id = student.sid
+    except (KeyError,Students.DoesNotExist):
+        return render(request, 'takai/semester.html',{
+        'student id': returned_student_id,
+        'error message': "This is not a valid student id.",
+            })
+    else:
+        enrollment = Enroll.objects.create(student = student, session=session,)
+        #pdb.set_trace()
+        enrollment.save()
+    
+
+
+    return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+
+
+# Enroll.objects.create
+
 
 
 #response = "You're looking at the %s."

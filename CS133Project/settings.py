@@ -84,6 +84,9 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
             'NAME': 'takaiDB',
             'USER': 'manon2@buoyant-mason-198603.iam.gserviceaccount.com',
             'PASSWORD': '',
+            'OPTIONS': {
+                "init_command": "SET foreign_key_checks = 0;",
+             },
         }
     }
 else:
@@ -101,9 +104,14 @@ else:
             'NAME': 'takaiDB',
             'USER': 'manon',
             'PASSWORD': 'takai12',
+            'OPTIONS': {
+                "init_command": "SET foreign_key_checks = 0;",
+             },
         }
     }
-
+#SILENCED_SYSTEM_CHECKS = [
+    #'django_mysql.W002',
+#]
 
 
 # Password validation

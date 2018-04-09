@@ -1,10 +1,18 @@
 <h1><a href="/takai/">TAkai</a></li>
-<h2>CS{{some_class.cid}}: {{ some_class.name }}</h2>
+<h2> {{ semester }} {{ year }} </h2>
+<h2>CS{{some_class.cid}}: {{ some_class.name }} </h2>
 
-<ul>
+<form action="{% url 'session-enroll' year semester some_class.cid %}" method="post">
+	{% csrf_token %}
+    <label for="student_id_form">Enter 8 digit student id: </label>
+    <input id="student_id_form" type="text" name="student_id_field" value="Enter here.">
+    <input type="submit" value="Enroll">
+</form>
+
+<ul> 
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
-    <li>Classrosom: {{ session.classroom }}</li>
+    <li>Classroom: {{ session.classroom }}</li>
     <li>Instructor: </li>
     <li>Office Hours: </li>
     <li>Mentor Sessions: </li>
