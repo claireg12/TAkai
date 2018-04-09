@@ -1,13 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+.button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 25px;
+    text-align: right;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: green;
+}
+</style>
+
+</head>
+
+<body>
+
+<div style="float:right"> <a href="/takai/logout/">Logout</a> </div>
+
 <h1><a href="/takai/">TAkai</a></li>
 <h2>{{semester}} {{year}} Courses</h2>
+
 
 {% if current_classes %}
     <ul>
     {% for classes in current_classes %}
-        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid }}: {{classes.name}}  </a></li>
+        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid }}: {{classes.name}} </a>
+        	<button class="button">Enroll</button>
+        </li>
     {% endfor %}
     </ul>
 {% else %}
     <p>No classes are available.</p>
 {% endif %}
 
+<!-- <form action="/takai/" method="post">
+{% csrf_token %}
+{% for classes in current_classes %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ classes.cid }}" />
+    <label for="choice{{ forloop.counter }}">{{ classes.name }}</label><br />
+{% endfor %}
+<input type="submit" value="Vote" />
+</form> -->
+
+<!-- <form action="/takai/" method="get">
+    <label for="team_name">Enter name: </label>
+    <input id="team_name" type="text" name="name_field" value="Default name for team.">
+    <input type="submit" value="OK">
+</form>
+ -->
+</body>
+</html>
