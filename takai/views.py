@@ -19,10 +19,11 @@ import pdb
 # Home page
 @login_required
 def semester(request, year, semester):
-    ordered_classes = Classes.objects.order_by('cid')
-    current_classes = ordered_classes.filter(session__semester=semester, session__year=year)
+    # ordered_classes = Classes.objects.order_by('cid')
+    # current_classes = ordered_classes.filter(session__semester=semester, session__year=year)
+    current_classes = Session.objects.filter(semester=semester, year=year)
     context = {'current_classes': current_classes, 'year': year, 'semester':semester}
-    
+
     if request.user.has_perm('professors.can_add_professors'):
         return render(request, 'takai/semester_prof.html', context)
     else:
@@ -33,16 +34,16 @@ def semester(request, year, semester):
 def session(request, year, semester, cid):
     try:
         some_class = Classes.objects.get(pk=cid)
-        teach = Teach.objects.filter(cid=cid, semester=semester, year=year).values_list('fid', flat=True)
+        #teach = Teach.objects.filter(cid=cid, semester=semester, year=year).values_list('professor', flat=True)
         # this_teach = teach[0].professors_fid
         # names = Professors.objects.filter(fid=this_teach)
         # prof = teach.filter(professors_fid=teach.fid)
         # profs = Professors.filter(fid=)
-        context = {'some_class': some_class, 'teach': teach,'year': year, 'semester': semester}
+        context = {'some_class': some_class,'year': year, 'semester': semester} # removed teach
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
-    except Teach.DoesNotExist:
-        raise Http404("Teach entry does not exist")
+    # except Teach.DoesNotExist:
+    #     raise Http404("Teach entry does not exist")
     return render(request, 'takai/session.html', context)
 
 
@@ -67,9 +68,9 @@ def enroll(request, year, semester, cid):
     #student = get_object_or_404(Students, pk=request.POST['student_id_field'])
     #session = get_object_or_404(Session, pk=cid)
     student = Students.objects.get(pk=request.POST['student_id_field'])
-    session = Session.objects.get(pk=cid)
+    session = Session.objects.get(theclass=cid) # (pk=cid)
     #pdb.set_trace()
-    try: 
+    try:
         returned_student_id = student.sid
     except (KeyError,Students.DoesNotExist):
         return render(request, 'takai/semester.html',{
@@ -80,7 +81,7 @@ def enroll(request, year, semester, cid):
         enrollment = Enroll.objects.create(student = student, session=session,)
         #pdb.set_trace()
         enrollment.save()
-    
+
 
 
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))

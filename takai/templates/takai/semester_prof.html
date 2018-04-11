@@ -35,7 +35,7 @@
 {% if current_classes %}
     <ul>
     {% for classes in current_classes %}
-        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid }}: {{classes.name}}  </a>
+        <li><a href="{% url 'session' year semester classes.theclass %}">CS{{ classes.theclass }}: {{classes.theclass.name}}  </a>
         	<button class="button">Teach</button>
         </li>
     {% endfor %}
