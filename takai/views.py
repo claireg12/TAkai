@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 
-from .models import Classes, Students, Enroll, Session,  Teach, Professors
+from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host
 import pdb
 
 
@@ -34,12 +34,11 @@ def semester(request, year, semester):
 def session(request, year, semester, cid):
     try:
         some_class = Classes.objects.get(pk=cid)
-        #teach = Teach.objects.filter(cid=cid, semester=semester, year=year).values_list('professor', flat=True)
-        # this_teach = teach[0].professors_fid
-        # names = Professors.objects.filter(fid=this_teach)
-        # prof = teach.filter(professors_fid=teach.fid)
-        # profs = Professors.filter(fid=)
-        context = {'some_class': some_class,'year': year, 'semester': semester} # removed teach
+        tas = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
+        profs = Teach.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
+        mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
+
+        context = {'some_class': some_class,'year': year, 'semester': semester, 'tas': tas, 'profs': profs, 'mentorsessions': mentorsessions} # removed teach
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
     # except Teach.DoesNotExist:

@@ -20,10 +20,13 @@ class Classes(models.Model):
         managed = True
         db_table = 'Classes'
 
-# Added primary key ???
+# should change student to ta
 class Mentor(models.Model):
-    student = models.ForeignKey('Students', models.DO_NOTHING, blank=False, null=False)
+    student = models.ForeignKey('Ta', models.DO_NOTHING, blank=False, null=False)
     session = models.ForeignKey('Session', models.DO_NOTHING, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.student.student.name) + ' ' + str(self.session)
 
     class Meta:
         managed = True
@@ -37,12 +40,14 @@ class Mentorsessions(models.Model):
     day = models.CharField(max_length=255, blank=False, null=False)
     location = models.CharField(max_length=255, blank=True, null=True)
 
+    def __str__(self):
+        return str(self.session) + ' ' + str(self.time) + ' ' + str(self.day)
+
     class Meta:
         managed = True
         db_table = 'Mentorsessions'
         unique_together = (('session', 'time','day','location'),)
 
-# Added primary key ???
 class Enroll(models.Model):
     student = models.ForeignKey('Students', models.DO_NOTHING, blank=False, null=False)
     session = models.ForeignKey('Session', models.DO_NOTHING, blank=False, null=False)
@@ -62,6 +67,9 @@ class Professors(models.Model):
     email = models.CharField(max_length=255, blank=False, null=False)
     office = models.CharField(max_length=255, blank=False, null=False)
     officehours = models.CharField(db_column='officeHours', max_length=255, blank=True, null=True)  # Field name made lowercase.
+
+    def __str__(self):
+        return ' ' + str(self.name) + ' ' + str(self.fid)
 
     class Meta:
         managed = True
@@ -97,11 +105,13 @@ class Students(models.Model):
         managed = True
         db_table = 'Students'
 
-# Added primary key????
 class Ta(models.Model):
     student = models.OneToOneField(Students, models.DO_NOTHING, blank=False, null=False) # from pk to one to one field
     bio = models.CharField(max_length=1500, blank=True, null=True)
     picture = models.CharField(max_length=300, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.student.name)
 
     class Meta:
         managed = True
@@ -110,10 +120,25 @@ class Ta(models.Model):
 class Teach(models.Model):
     professor = models.ForeignKey(Professors, models.DO_NOTHING, blank=False, null=False)
     session = models.ForeignKey(Session, models.DO_NOTHING, blank=False, null=False)
+    
+    def __str__(self):
+        return str(self.professor) + ' ' + str(self.session)
 
     class Meta:
         managed = True
         db_table = 'Teach'
+
+class Host(models.Model):
+    student = models.ForeignKey(Students, models.DO_NOTHING, blank=False, null=False)
+    session = models.ForeignKey(Session, models.DO_NOTHING, blank=False, null=False)
+    mentorsesh = models.ForeignKey(Mentorsessions, models.DO_NOTHING, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.student.name) + ' ' + str(self.session) + ' ' + str(self.mentorsesh.time) + ' ' + str(self.mentorsesh.day)
+
+    class Meta:
+        managed = True
+        db_table = 'Host'
 
 
 class AuthGroup(models.Model):
