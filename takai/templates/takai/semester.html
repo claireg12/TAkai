@@ -30,8 +30,9 @@
 {% if current_classes %}
     <ul>
     {% for classes in current_classes %}
-        <li><a href="{% url 'session' year semester classes.cid %}">CS{{ classes.cid }}: {{classes.name}} </a>
-        	<button class="button">Enroll</button>
+        <!-- Button should say Enroll, not user id -->
+        <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
+        	<button class="button">{{user_id}}</button>
         </li>
     {% endfor %}
     </ul>

@@ -19,14 +19,22 @@ import pdb
 # Home page
 @login_required
 def semester(request, year, semester):
+
+
     # ordered_classes = Classes.objects.order_by('cid')
     # current_classes = ordered_classes.filter(session__semester=semester, session__year=year)
     current_classes = Session.objects.filter(semester=semester, year=year)
-    context = {'current_classes': current_classes, 'year': year, 'semester':semester}
+    
+    #if request.user.has_perm('professors.can_add_professors'):
 
-    if request.user.has_perm('professors.can_add_professors'):
+    # this is kinda messy/can def be cleaned up
+    if request.user.groups.filter(name='Professors').exists():
+        user_id = Professors.objects.get(email=request.user.email)
+        context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : user_id.fid}
         return render(request, 'takai/semester_prof.html', context)
     else:
+        user_id = Students.objects.get(email=request.user.email)
+        context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : user_id.sid}
         return render(request, 'takai/semester.html', context)
 
 # Class page
@@ -66,6 +74,9 @@ def search(request):
 def enroll(request, year, semester, cid):
     #student = get_object_or_404(Students, pk=request.POST['student_id_field'])
     #session = get_object_or_404(Session, pk=cid)
+
+    # user_id_set = Students.objects.get(email=request.user.email)
+    # user_id = int(str(user_id_set.sid))
     student = Students.objects.get(pk=request.POST['student_id_field'])
     session = Session.objects.get(theclass=cid) # (pk=cid)
     #pdb.set_trace()
