@@ -18,14 +18,14 @@
     <input type="submit" value="Enroll">
 </form>
 
-<ul> 
+<ul>
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
     <li>Classroom: {{ session.classroom }}</li>
 
-    {% for oneteach in teach %}
+    <!-- {% for oneteach in teach %}
         <li>Instructor: {{ oneteach }} </li>
-    {% endfor %}
+    {% endfor %} -->
 
     <li>Office Hours: </li>
     <li>Mentor Sessions: </li>

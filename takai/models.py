@@ -12,13 +12,35 @@ from django.db import models
 class Classes(models.Model):
     cid = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=False, null=False)
-    
+
     def __str__(self):
         return str(self.cid)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Classes'
+
+# Added primary key ???
+class Mentor(models.Model):
+    student = models.ForeignKey('Students', models.DO_NOTHING, blank=False, null=False)
+    session = models.ForeignKey('Session', models.DO_NOTHING, blank=False, null=False)
+
+    class Meta:
+        managed = True
+        db_table = 'Mentor'
+        unique_together = (('student', 'session'),)
+
+
+class Mentorsessions(models.Model):
+    session = models.ForeignKey('Session', models.DO_NOTHING, blank=False, null=False)
+    time = models.CharField(max_length=255) # removed primary key
+    day = models.CharField(max_length=255, blank=False, null=False)
+    location = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'Mentorsessions'
+        unique_together = (('session', 'time','day','location'),)
 
 # Added primary key ???
 class Enroll(models.Model):
@@ -33,32 +55,6 @@ class Enroll(models.Model):
     def __str__(self):
         return str(self.sid) + ' ' + str(self.cid)
 
-# Added primary key ???
-class Mentor(models.Model):
-    sid = models.ForeignKey('Students', models.DO_NOTHING, db_column='sid', blank=False, null=False, related_name='sid_mentor_set', primary_key=True)
-    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=False, null=False, related_name='cid_mentor_set')
-    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=False, null=False, related_name='semester_mentor_set')
-    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=False, null=False, related_name='year_mentor_set')
-
-    class Meta:
-        managed = False
-        db_table = 'Mentor'
-        unique_together = (('sid','cid', 'semester', 'year'),)
-
-
-class Mentorsessions(models.Model):
-    cid = models.ForeignKey('Session', models.DO_NOTHING, db_column='cid', blank=False, null=False, related_name='cid_mentorsessions_set')
-    semester = models.ForeignKey('Session', models.DO_NOTHING, db_column='semester', blank=False, null=False, related_name='semester_mentorsessions_set')
-    year = models.ForeignKey('Session', models.DO_NOTHING, db_column='year', blank=False, null=False, related_name='year_mentorsessions_set')
-    time = models.CharField(primary_key=True, max_length=255)
-    day = models.CharField(max_length=255, blank=False, null=False)
-    location = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Mentorsessions'
-        unique_together = (('cid', 'semester', 'year','time','day','location'),)
-
 
 class Professors(models.Model):
     fid = models.IntegerField(primary_key=True)
@@ -68,24 +64,24 @@ class Professors(models.Model):
     officehours = models.CharField(db_column='officeHours', max_length=255, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Professors'
 
 
 class Session(models.Model):
-    cid = models.ForeignKey(Classes, models.DO_NOTHING, db_column='cid', primary_key=True)
-    semester = models.CharField(max_length=255,blank=False, null=False)     
+    theclass = models.ForeignKey(Classes, models.DO_NOTHING)
+    semester = models.CharField(max_length=255,blank=False, null=False)
     year = models.CharField(max_length=255, blank=False, null=False)
     classroom = models.CharField(max_length=255, blank=False, null=False)
     times = models.CharField(max_length=255, blank=False, null=False)
 
     def __str__(self):
-        return ' ' + str(self.cid) + ' ' + str(self.year) + ' ' + str(self.semester)
+        return ' ' + str(self.theclass) + ' ' + str(self.year) + ' ' + str(self.semester)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Session'
-        unique_together = (('cid', 'semester', 'year'),)
+        unique_together = (('theclass', 'semester', 'year'),)
 
 
 class Students(models.Model):
@@ -98,27 +94,25 @@ class Students(models.Model):
         return str(self.sid) + ' ' +str(self.name)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Students'
 
 # Added primary key????
 class Ta(models.Model):
-    sid = models.ForeignKey(Students, models.DO_NOTHING, db_column='sid', blank=False, null=False, primary_key=True)
+    student = models.OneToOneField(Students, models.DO_NOTHING, blank=False, null=False) # from pk to one to one field
     bio = models.CharField(max_length=1500, blank=True, null=True)
     picture = models.CharField(max_length=300, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'TA'
 
 class Teach(models.Model):
-    fid = models.ForeignKey(Professors, models.DO_NOTHING, db_column='fid', blank=True, null=False, related_name='fid_teach_set')
-    cid = models.ForeignKey(Session, models.DO_NOTHING, db_column='cid', blank=True, null=False, related_name='cid_teach_set', primary_key=True)
-    semester = models.ForeignKey(Session, models.DO_NOTHING, db_column='semester', blank=False, null=True, related_name='semester_teach_set')
-    year = models.ForeignKey(Session, models.DO_NOTHING, db_column='year', blank=True, null=False, related_name='year_teach_set')
+    professor = models.ForeignKey(Professors, models.DO_NOTHING, blank=False, null=False)
+    session = models.ForeignKey(Session, models.DO_NOTHING, blank=False, null=False)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Teach'
 
 
