@@ -78,8 +78,11 @@ def enroll(request, year, semester, cid):
             })
     else:
         enrollment = Enroll.objects.create(student = student, session=session,)
-        #pdb.set_trace()
         enrollment.save()
+
+def apply(request):
+    return render(request, 'takai/apply.html')
+
     
 
 

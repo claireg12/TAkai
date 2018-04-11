@@ -22,7 +22,10 @@ urlpatterns = [
             
     # ex: /takai/search/
     url(r'^search/$', views.search, name='search'),
-               
+
+    # ex: /takai/apply
+     url(r'^apply/$', views.search, name='apply'),
+
     
     url(r'^login/$', auth_views.login, name='login'),
                #  url(r'^logout/$', auth_views.logout, name='logout'),

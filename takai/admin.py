@@ -12,6 +12,7 @@ admin.site.register(Students)
 @admin.register(Enroll)
 class EnrollAdmin(admin.ModelAdmin):
 	list_display = ('student','session')
+	search_fields = ('student',)
 
 admin.site.register(Mentor)
 admin.site.register(Mentorsessions)
