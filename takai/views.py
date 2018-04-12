@@ -12,7 +12,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 
-from .models import Classes, Students, Enroll, Session, Teach, Professors, Ta, Mentor,Host
+from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta
+from .forms import UpdateProfessorInfo, UpdateSessionInfo
 import pdb
 
 def isProfessor(request):
@@ -50,11 +51,12 @@ def semester(request, year, semester):
 def session(request, year, semester, cid):
     try:
         some_class = Classes.objects.get(pk=cid)
+        some_session = Session.objects.get(theclass=cid)
         tas = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         profs = Teach.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
 
-        context = {'some_class': some_class,'year': year, 'semester': semester, 'tas': tas, 'profs': profs, 'mentorsessions': mentorsessions} # removed teach
+        context = {'some_session': some_session, 'some_class': some_class,'year': year, 'semester': semester, 'tas': tas, 'profs': profs, 'mentorsessions': mentorsessions} # removed teach
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
     # except Teach.DoesNotExist:
@@ -63,6 +65,49 @@ def session(request, year, semester, cid):
         return render(request, 'takai/session_prof.html', context)
     else:
         return render(request, 'takai/session.html', context)
+
+#check if permissions for this are right
+
+class UpdateSession(UpdateView):
+    model = Session
+    template_name_suffix = '_edit_prof'
+    form_class = UpdateSessionInfo
+    second_form_class = UpdateProfessorInfo
+
+    def get_success_url(self):
+        session_id = self.kwargs['pk']
+        some_session = Session.objects.get(pk=session_id)
+        return reverse_lazy('semester', args = (some_session.year,some_session.semester))
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateSession, self).get_context_data(**kwargs)
+        session_id = self.kwargs['pk']
+        teaches = Teach.objects.get(session=session_id)
+        some_professor = teaches.professor
+        context['Professors'] = Professors.objects.get(fid=teaches.professor.fid)
+        context['prof_form'] = self.second_form_class(instance=some_professor)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # Save the changes to the professor table
+        # Changes to the session table are automatically saved
+        if 'email' in request.POST:
+            professor_update_form = self.second_form_class(request.POST)
+            if professor_update_form.is_valid():
+                professor_update = professor_update_form.cleaned_data
+                some_professor = Professors(**professor_update)
+
+                teaches = Teach.objects.get(session=self.kwargs['pk'])
+                class_professor = Professors.objects.get(fid = teaches.professor.fid)
+                some_professor.fid = class_professor.fid
+                some_professor.save()
+                return super(UpdateSession, self).post(request, *args, **kwargs)
+            else:
+                return super(UpdateSession, self).post(request, *args, **kwargs)
+        else:
+            return super(UpdateSession, self).post(request, *args, **kwargs)
+
 
 
 # Profile page
@@ -131,5 +176,3 @@ def prof(request, year, semester, cid):
         ta = Ta.objects.get(student=student)
         assignment2 = Mentor.objects.create(ta = ta, session=session,)
         assignment2.save()
-
-    return HttpResponseRedirect(reverse('semester', args = (year,semester)))

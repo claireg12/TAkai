@@ -11,17 +11,32 @@
 <h2> {{ semester }} {{ year }} </h2>
 <h2>CS{{some_class.cid}}: {{ some_class.name }} </h2>
 
-<div style="float:right"> <a href="{% url 'session-faculty-edit' year semester some_class.cid some_session.pk %}">Edit Class</a> </div>
+<form action="{% url 'session-enroll' year semester some_class.cid %}" method="post">
+    {% csrf_token %}
+    <label for="student_id_form">Enter 8 digit student id: </label>
+    <input id="student_id_form" type="text" name="student_id_field" value="Enter here.">
+    <input type="submit" value="Enroll">
+</form>
 
 <ul>
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
+
+    <form action="{% url 'session-enroll' year semester some_class.cid %}" method="post">
+    {% csrf_token %}
+    <label for="lecture_form">Lectures: </label>
+    <input id="lecture_form" type="text" name="lecture_form" value=session.times>
+    <input type="submit" value="Update">
+</form>
+
     <li>Classroom: {{ session.classroom }}</li>
+    <!-- TODO: get rid of comma after last one // replaced it with line break -->
     <li>Professor(s):
         {% for prof in profs %}
             {{prof.professor.name}} <br/>
         {% endfor %}
     </li>
+    <!-- TODO: get rid of comma after last one // replaced it with line break-->
     <li>Office Hours:
         {% for prof in profs %}
             {{prof.professor.officehours}} <br/>
@@ -34,10 +49,11 @@
         {% endfor %}
         </ul>
     </li>
+    <!-- TODO: get rid of L suffix on id numbers (ie 23456789L) and change hardcoded id -->
     <li>TAs:
         <ul>
         {% for ta in tas %}
-            <li><a href="/takai/{{ta.student.student.sid}}"> {{ta.student.student.name}}</a>: {{ta.student.bio}} </li>
+            <li><a href="/takai/010314573/"> {{ta.student.student.name}}</a>: {{ta.student.bio}} </li>
         {% endfor %}
         </ul>
     </li>
