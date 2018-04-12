@@ -183,19 +183,18 @@ def enroll(request, year, semester, cid):
 # How a prof assigns a TA to a class
 # If the student is not a TA yet, adds it as a TA and as a mentor for that class
 def prof(request, year, semester, cid):
-    student = Students.objects.get(name=request.POST.get('student_name_field', False))
-    session = Session.objects.get(theclass=cid)
+    session1 = Session.objects.get(theclass=cid)
     try:
+        student = Students.objects.get(name=request.POST.get('student_name_field', False))
         returned_student_name = student.name
     except (KeyError, Students.DoesNotExist):
-        return render(request, 'takai/semester_prof.html',{
-        'student name': returned_student_name,
-        'error message': "This student does not exist",
-        })
+        return session(request, year, semester, cid)
     else:
-        if not Ta.objects.filter(ta=student):
-            assignment1 = Ta.objects.create(ta = student,)
+        if not Ta.objects.filter(student=student):
+            assignment1 = Ta.objects.create(student = student,)
             assignment1.save()
         ta = Ta.objects.get(student=student)
-        assignment2 = Mentor.objects.create(ta = ta, session=session,)
+        assignment2 = Mentor.objects.create(ta = ta, session=session1,)
         assignment2.save()
+
+    return session(request, year, semester, cid)
