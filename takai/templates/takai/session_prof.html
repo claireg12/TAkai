@@ -13,8 +13,8 @@
 
 <form action="{% url 'session-prof' year semester some_class.cid %}" method="post">
 	{% csrf_token %}
-    <label for="student_id_form">Enter 8 digit student id: </label>
-    <input id="student_id_form" type="text" name="student_id_field" value="Enter here.">
+    <label for="student_name_form">Enter student name: </label>
+    <input id="student_name_form" type="text" name="student_name_field" value="">
     <input type="submit" value="Assign TA">
 </form>
 
