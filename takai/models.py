@@ -22,7 +22,7 @@ class Classes(models.Model):
 
 # should change student to ta
 class Mentor(models.Model):
-    student = models.ForeignKey('Ta', models.DO_NOTHING, blank=False, null=False)
+    student = models.ForeignKey('Ta', models.DO_NOTHING, blank=False, null=False) # should be renamed to ta
     session = models.ForeignKey('Session', models.DO_NOTHING, blank=False, null=False)
 
     def __str__(self):
@@ -120,7 +120,7 @@ class Ta(models.Model):
 class Teach(models.Model):
     professor = models.ForeignKey(Professors, models.DO_NOTHING, blank=False, null=False)
     session = models.ForeignKey(Session, models.DO_NOTHING, blank=False, null=False)
-    
+
     def __str__(self):
         return str(self.professor) + ' ' + str(self.session)
 

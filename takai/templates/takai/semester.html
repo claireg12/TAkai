@@ -32,7 +32,7 @@
     {% for classes in current_classes %}
         <!-- Button should say Enroll, not user id -->
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
-        	<button class="button">{{user_id}}</button>
+        	<button class="button">{{user_id}}</button> 
         </li>
     {% endfor %}
     </ul>

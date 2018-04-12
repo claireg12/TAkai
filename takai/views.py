@@ -12,19 +12,17 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 
-from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host
+from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host, Ta
 import pdb
 
 
 # Home page
 @login_required
 def semester(request, year, semester):
-
-
     # ordered_classes = Classes.objects.order_by('cid')
     # current_classes = ordered_classes.filter(session__semester=semester, session__year=year)
     current_classes = Session.objects.filter(semester=semester, year=year)
-    
+
     #if request.user.has_perm('professors.can_add_professors'):
 
     # this is kinda messy/can def be cleaned up
@@ -35,7 +33,7 @@ def semester(request, year, semester):
     else:
         user_id = Students.objects.get(email=request.user.email)
         context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : user_id.sid}
-        return render(request, 'takai/semester.html', context)
+        return render(request, 'takai/semester.html', context) # TODO: TO CHANGE BACK!!! (to semester.html)
 
 # Class page
 @login_required
@@ -51,7 +49,10 @@ def session(request, year, semester, cid):
         raise Http404("Class does not exist")
     # except Teach.DoesNotExist:
     #     raise Http404("Teach entry does not exist")
-    return render(request, 'takai/session.html', context)
+    if request.user.groups.filter(name='Professors').exists():
+        return render(request, 'takai/session_prof.html', context)
+    else:
+        return render(request, 'takai/session.html', context)
 
 
 # Profile page
@@ -92,6 +93,26 @@ def enroll(request, year, semester, cid):
         #pdb.set_trace()
         enrollment.save()
 
+    return HttpResponseRedirect(reverse('semester', args = (year,semester)))
 
+# How a prof assigns a TA to a class
+# If the student is not a TA yet, adds it as a TA and as a mentor for that class
+def prof(request, year, semester, cid):
+    student = Students.objects.get(pk=request.POST.get('student_id_field', False))
+    session = Session.objects.get(theclass=cid)
+    try:
+        returned_student_id = student.sid
+    except (KeyError, Students.DoesNotExist):
+        return render(request, 'takai/semester_prof.html',{
+        'student id': returned_student_id,
+        'error message': "This is not a valid student id",
+        })
+    else:
+        if not Ta.objects.filter(student=student):
+            assignment1 = Ta.objects.create(student = student,)
+            assignment1.save()
+        ta = Ta.objects.get(student=student)
+        assignment2 = Mentor.objects.create(student = ta, session=session,)
+        assignment2.save()
 
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
