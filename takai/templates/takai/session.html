@@ -18,6 +18,8 @@
     <input type="submit" value="Enroll">
 </form>
 
+<div style="float:right"> <a href="{% url 'session-faculty-edit' year semester some_class.cid some_session.pk %}">Edit Class</a> </div>
+
 <ul>
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
