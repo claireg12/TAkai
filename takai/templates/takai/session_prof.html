@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="session.css"> <!-- doesn't work -->
+  <!--link rel="stylesheet" type="text/css" href="session.css"> < doesn't work -->
 </head>
 
 <body>
@@ -11,17 +11,17 @@
 <h2> {{ semester }} {{ year }} </h2>
 <h2>CS{{some_class.cid}}: {{ some_class.name }} </h2>
 
-<div style="float:right"> <a href="{% url 'session-faculty-edit' year semester some_class.cid some_session.pk %}">Edit Class</a> </div>
-
 <ul>
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
     <li>Classroom: {{ session.classroom }}</li>
+    <!-- TODO: get rid of comma after last one // replaced it with line break -->
     <li>Professor(s):
         {% for prof in profs %}
             {{prof.professor.name}} <br/>
         {% endfor %}
     </li>
+    <!-- TODO: get rid of comma after last one // replaced it with line break-->
     <li>Office Hours:
         {% for prof in profs %}
             {{prof.professor.officehours}} <br/>
@@ -34,6 +34,7 @@
         {% endfor %}
         </ul>
     </li>
+    <!-- TODO: get rid of L suffix on id numbers (ie 23456789L) and change hardcoded id -->
     <li>TAs:
         <ul>
         {% for ta in tas %}
@@ -43,6 +44,13 @@
     </li>
 {% endfor %}
 </ul>
+
+<form action="{% url 'session-prof' year semester some_class.cid %}" method="post">
+	{% csrf_token %}
+    <label for="student_name_form">Enter student name: </label>
+    <input id="student_name_form" type="text" name="student_name_field" value="">
+    <input type="submit" value="Assign TA">
+</form>
 
 <link rel="stylesheet" type="text/css" href="mystyle.css">
 
