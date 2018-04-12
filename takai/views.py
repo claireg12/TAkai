@@ -11,9 +11,11 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta
 from .forms import *
+import pdb
 
 def isProfessor(request):
     return request.user.groups.filter(name='Professors').exists()
@@ -25,6 +27,12 @@ def getUserId(request):
         user_id = Students.objects.get(email=request.user.email).sid
     return user_id
 
+def isTA(pk):
+    try:
+        ta = TA.objects.get(pk=pk)
+        return true
+    except User.DoesNotExist:
+        return false
 
 # Home page
 @login_required
@@ -40,6 +48,8 @@ def semester(request, year, semester):
         return render(request, 'takai/semester_prof.html', context)
     else:
         my_classes = Enroll.objects.filter(session__semester=semester, session__year=year, student__sid=getUserId(request))
+        #not_my_classes = all_classes.exclude(my_classes)
+        #not_my_classes = set(all_classes).difference(set(my_classes))
         context = {'all_classes': all_classes, 'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
         return render(request, 'takai/semester.html', context)
 
@@ -74,14 +84,14 @@ class UpdateSession(UpdateView):
         session_id = self.kwargs['pk']
         some_session = Session.objects.get(pk=session_id)
         return reverse_lazy('semester', args = (some_session.year,some_session.semester))
-  
+
     def get_context_data(self, **kwargs):
         context = super(UpdateSession, self).get_context_data(**kwargs)
         session_id = self.kwargs['pk']
         teaches = Teach.objects.get(session=session_id)
         some_professor = teaches.professor
         context['Professors'] = Professors.objects.get(fid=teaches.professor.fid)
-        context['prof_form'] = self.second_form_class(instance=some_professor) 
+        context['prof_form'] = self.second_form_class(instance=some_professor)
         return context
 
     def post(self, request, *args, **kwargs):
@@ -113,6 +123,15 @@ class UpdateTa(UpdateView):
     model = Ta
     template_name_suffix = '_ta_edit'
     form_class = UpdateTaInfo
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateSession, self).get_context_data(**kwargs)
+        if isTA(self.kwargs['pk']):
+            return context
+        else:
+            raise Http404("You need TA permissions to edit this")
+
+
 
 # Profile page
 @login_required
@@ -174,12 +193,9 @@ def prof(request, year, semester, cid):
         'error message': "This student does not exist",
         })
     else:
-        if not Ta.objects.filter(student=student):
-            assignment1 = Ta.objects.create(student = student,)
+        if not Ta.objects.filter(ta=student):
+            assignment1 = Ta.objects.create(ta = student,)
             assignment1.save()
         ta = Ta.objects.get(student=student)
-        assignment2 = Mentor.objects.create(student = ta, session=session,)
+        assignment2 = Mentor.objects.create(ta = ta, session=session,)
         assignment2.save()
-
-
-    

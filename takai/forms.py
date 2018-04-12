@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import ModelForm
+from django.contrib.messages.views import SuccessMessageMixin
 from takai.models import *
 
 class UpdateProfessorInfo(forms.ModelForm):
@@ -16,7 +17,7 @@ class UpdateSessionInfo(forms.ModelForm):
 class UpdateHostInfo(forms.ModelForm):
     class Meta:
         model = Host
-        fields = ['student', 'mentorsesh']
+        fields = ['ta', 'mentorsesh']
 
 
 class UpdateTaInfo(forms.ModelForm):

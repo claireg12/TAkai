@@ -35,7 +35,7 @@
         {% endfor %}
         </ul>
     </li>
-<div style="float:right"> <a href="{% url 'ta-edit' year semester some_class.cid some_session.pk %}">Edit TA Information</a> </div>
+<div style="float:right"> <a href="{% url 'ta-edit' year semester user.id %}">Edit TA Information</a> </div>
     <li>TAs:
         <ul>
         {% for ta in tas %}

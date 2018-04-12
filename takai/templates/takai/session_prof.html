@@ -38,7 +38,7 @@
     <li>TAs:
         <ul>
         {% for ta in tas %}
-            <li><a href="/takai/{{ta.student.student.sid}}"> {{ta.student.student.name}}</a>: {{ta.student.bio}} </li>
+            <li><a href="/takai/{{ta.ta.student.sid}}"> {{ta.ta.student.name}}</a>: {{ta.ta.student.bio}} </li>
         {% endfor %}
         </ul>
     </li>
