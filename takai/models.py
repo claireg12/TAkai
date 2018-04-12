@@ -22,20 +22,20 @@ class Classes(models.Model):
 
 # should change student to ta
 class Mentor(models.Model):
-    student = models.ForeignKey('Ta', models.DO_NOTHING, blank=False, null=False) # should be renamed to ta
-    session = models.ForeignKey('Session', models.DO_NOTHING, blank=False, null=False)
+    ta = models.ForeignKey('Ta', on_delete=models.CASCADE, blank=False, null=False) # should be renamed to ta
+    session = models.ForeignKey('Session', on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):
-        return str(self.student.student.name) + ' ' + str(self.session)
+        return str(self.ta.student.name) + ' ' + str(self.session)
 
     class Meta:
         managed = True
         db_table = 'Mentor'
-        unique_together = (('student', 'session'),)
+        unique_together = (('ta', 'session'),)
 
 
 class Mentorsessions(models.Model):
-    session = models.ForeignKey('Session', models.DO_NOTHING, blank=False, null=False)
+    session = models.ForeignKey('Session', on_delete=models.CASCADE, blank=False, null=False)
     time = models.CharField(max_length=255) # removed primary key
     day = models.CharField(max_length=255, blank=False, null=False)
     location = models.CharField(max_length=255, blank=True, null=True)
@@ -49,8 +49,8 @@ class Mentorsessions(models.Model):
         unique_together = (('session', 'time','day','location'),)
 
 class Enroll(models.Model):
-    student = models.ForeignKey('Students', models.DO_NOTHING, blank=False, null=False)
-    session = models.ForeignKey('Session', models.DO_NOTHING, blank=False, null=False)
+    student = models.ForeignKey('Students', on_delete=models.CASCADE, blank=False, null=False)
+    session = models.ForeignKey('Session', on_delete=models.CASCADE, blank=False, null=False)
 
     class Meta:
         managed = True
@@ -77,7 +77,7 @@ class Professors(models.Model):
 
 
 class Session(models.Model):
-    theclass = models.ForeignKey(Classes, models.DO_NOTHING)
+    theclass = models.ForeignKey(Classes, on_delete=models.CASCADE)
     semester = models.CharField(max_length=255,blank=False, null=False)
     year = models.CharField(max_length=255, blank=False, null=False)
     classroom = models.CharField(max_length=255, blank=False, null=False)
@@ -106,7 +106,7 @@ class Students(models.Model):
         db_table = 'Students'
 
 class Ta(models.Model):
-    student = models.OneToOneField(Students, models.DO_NOTHING, blank=False, null=False) # from pk to one to one field
+    student = models.OneToOneField(Students, on_delete=models.CASCADE, blank=False, null=False) # from pk to one to one field
     bio = models.CharField(max_length=1500, blank=True, null=True)
     picture = models.CharField(max_length=300, blank=True, null=True)
 
@@ -118,8 +118,8 @@ class Ta(models.Model):
         db_table = 'TA'
 
 class Teach(models.Model):
-    professor = models.ForeignKey(Professors, models.DO_NOTHING, blank=False, null=False)
-    session = models.ForeignKey(Session, models.DO_NOTHING, blank=False, null=False)
+    professor = models.ForeignKey(Professors, on_delete=models.CASCADE, blank=False, null=False)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):
         return str(self.professor) + ' ' + str(self.session)
@@ -129,12 +129,12 @@ class Teach(models.Model):
         db_table = 'Teach'
 
 class Host(models.Model):
-    student = models.ForeignKey(Students, models.DO_NOTHING, blank=False, null=False)
-    session = models.ForeignKey(Session, models.DO_NOTHING, blank=False, null=False)
-    mentorsesh = models.ForeignKey(Mentorsessions, models.DO_NOTHING, blank=False, null=False)
+    ta = models.ForeignKey(Ta, on_delete=models.CASCADE, blank=False, null=False)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, blank=False, null=False)
+    mentorsesh = models.ForeignKey(Mentorsessions, on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):
-        return str(self.student.name) + ' ' + str(self.session) + ' ' + str(self.mentorsesh.time) + ' ' + str(self.mentorsesh.day)
+        return str(self.ta.student.name) + ' ' + str(self.session) + ' ' + str(self.mentorsesh.time) + ' ' + str(self.mentorsesh.day)
 
     class Meta:
         managed = True
