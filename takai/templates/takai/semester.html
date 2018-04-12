@@ -9,12 +9,15 @@
     padding: 15px 25px;
     text-align: right;
     font-size: 16px;
-    cursor: pointer;
+    cursor: pointer;    
 }
-
 .button:hover {
     background: green;
 }
+.form{
+    display: inline;
+}
+
 </style>
 
 </head>
@@ -30,9 +33,11 @@
 {% if current_classes %}
     <ul>
     {% for classes in current_classes %}
-        <!-- Button should say Enroll, not user id -->
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
-        	<button class="button">{{user_id}}</button>
+            <form class = "form" action="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}/enroll/" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Enroll">
+            </form>
         </li>
     {% endfor %}
     </ul>
@@ -40,20 +45,6 @@
     <p>No classes are available.</p>
 {% endif %}
 
-<!-- <form action="/takai/" method="post">
-{% csrf_token %}
-{% for classes in current_classes %}
-    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ classes.cid }}" />
-    <label for="choice{{ forloop.counter }}">{{ classes.name }}</label><br />
-{% endfor %}
-<input type="submit" value="Vote" />
-</form> -->
 
-<!-- <form action="/takai/" method="get">
-    <label for="team_name">Enter name: </label>
-    <input id="team_name" type="text" name="name_field" value="Default name for team.">
-    <input type="submit" value="OK">
-</form>
- -->
 </body>
 </html>
