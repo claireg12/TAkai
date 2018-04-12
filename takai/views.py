@@ -13,7 +13,7 @@ from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta
-from .forms import UpdateProfessorInfo, UpdateSessionInfo
+from .forms import *
 
 def isProfessor(request):
     return request.user.groups.filter(name='Professors').exists()
@@ -64,7 +64,6 @@ def session(request, year, semester, cid):
         return render(request, 'takai/session.html', context)
 
 #check if permissions for this are right
-
 class UpdateSession(UpdateView):
     model = Session
     template_name_suffix = '_edit_prof'
@@ -105,7 +104,15 @@ class UpdateSession(UpdateView):
         else:
             return super(UpdateSession, self).post(request, *args, **kwargs)
 
+class UpdateMentor(UpdateView):
+    model = Host
+    template_name_suffix = '_edit_mentor_session'
+    form_class = UpdateHostInfo
 
+class UpdateTa(UpdateView):
+    model = Ta
+    template_name_suffix = '_ta_edit'
+    form_class = UpdateTaInfo
 
 # Profile page
 @login_required

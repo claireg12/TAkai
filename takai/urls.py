@@ -22,8 +22,14 @@ urlpatterns = [
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/prof/$', views.prof, name='session-prof'),
 
      # ex: /takai/2018Spring/140/edit/faculty
-     #url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/edit/faculty$', views.edit_prof, name='session-faculty-edit'),
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit/faculty/$', views.UpdateSession.as_view(), name='session-faculty-edit'),
+
+    # ex: /takai/2018Spring/140/edit/mentor
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit/mentor/$', views.UpdateMentor.as_view(), name='session-mentor-edit'),
+
+    # ex: /takai/2018Spring/(ta_id)/edit
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<pk>\d+)/edit/mentor/$', views.UpdateMentor.as_view(), name='ta-edit'),
+
     # ex: /takai/010314573/
     url(r'^(?P<sid>[0-9]{8})/$', views.profile, name='profile'),
 

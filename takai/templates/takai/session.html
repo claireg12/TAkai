@@ -27,6 +27,7 @@
             {{prof.professor.officehours}} <br/>
         {% endfor %}
     </li>
+<div style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid some_session.pk %}">Edit Mentor Session</a> </div>
     <li>Mentor Sessions:
         <ul>
         {% for mentorsesh in mentorsessions %}
@@ -34,6 +35,7 @@
         {% endfor %}
         </ul>
     </li>
+<div style="float:right"> <a href="{% url 'ta-edit' year semester some_class.cid some_session.pk %}">Edit TA Information</a> </div>
     <li>TAs:
         <ul>
         {% for ta in tas %}
