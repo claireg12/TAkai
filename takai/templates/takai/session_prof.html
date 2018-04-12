@@ -11,13 +11,6 @@
 <h2> {{ semester }} {{ year }} </h2>
 <h2>CS{{some_class.cid}}: {{ some_class.name }} </h2>
 
-<form action="{% url 'session-prof' year semester some_class.cid %}" method="post">
-	{% csrf_token %}
-    <label for="student_name_form">Enter student name: </label>
-    <input id="student_name_form" type="text" name="student_name_field" value="">
-    <input type="submit" value="Assign TA">
-</form>
-
 <ul>
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
@@ -51,6 +44,13 @@
     </li>
 {% endfor %}
 </ul>
+
+<form action="{% url 'session-prof' year semester some_class.cid %}" method="post">
+	{% csrf_token %}
+    <label for="student_name_form">Enter student name: </label>
+    <input id="student_name_form" type="text" name="student_name_field" value="">
+    <input type="submit" value="Assign TA">
+</form>
 
 <link rel="stylesheet" type="text/css" href="mystyle.css">
 
