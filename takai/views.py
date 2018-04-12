@@ -15,26 +15,32 @@ from django.contrib.auth import authenticate, login
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host
 import pdb
 
+def isProfessor(request):
+    return request.user.groups.filter(name='Professors').exists()
+
+def getUserId(request):
+    if isProfessor(request):
+        user_id = Professors.objects.get(email=request.user.email).fid
+    else:
+        user_id = Students.objects.get(email=request.user.email).sid
+    return user_id
+
 
 # Home page
 @login_required
 def semester(request, year, semester):
 
-
     # ordered_classes = Classes.objects.order_by('cid')
     # current_classes = ordered_classes.filter(session__semester=semester, session__year=year)
     current_classes = Session.objects.filter(semester=semester, year=year)
-    
+    context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
+
     #if request.user.has_perm('professors.can_add_professors'):
 
     # this is kinda messy/can def be cleaned up
-    if request.user.groups.filter(name='Professors').exists():
-        user_id = Professors.objects.get(email=request.user.email)
-        context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : user_id.fid}
+    if isProfessor(request):
         return render(request, 'takai/semester_prof.html', context)
     else:
-        user_id = Students.objects.get(email=request.user.email)
-        context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : user_id.sid}
         return render(request, 'takai/semester.html', context)
 
 # Class page
