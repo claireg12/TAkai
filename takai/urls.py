@@ -15,7 +15,9 @@ urlpatterns = [
     # ex: /takai/2018Spring/140/
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/$', views.session, name='session'),
 
+
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/enroll/$', views.enroll, name='session-enroll'),
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/teach/$', views.teach, name='session-teach'),
 
     # session for professors (can add TAs)
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/prof/$', views.prof, name='session-prof'),
@@ -28,7 +30,7 @@ urlpatterns = [
 
 
     url(r'^login/$', auth_views.login, name='login'),
-               #  url(r'^logout/$', auth_views.logout, name='logout'),
+
     url(r'^admin/', admin.site.urls),
 
     url(r'^logout/$', auth_views.logout, {'template_name': 'registration/logout.html'}, name='logout'),

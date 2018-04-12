@@ -15,25 +15,33 @@ from django.contrib.auth import authenticate, login
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host, Ta
 import pdb
 
+def isProfessor(request):
+    return request.user.groups.filter(name='Professors').exists()
+
+def getUserId(request):
+    if isProfessor(request):
+        user_id = Professors.objects.get(email=request.user.email).fid
+    else:
+        user_id = Students.objects.get(email=request.user.email).sid
+    return user_id
+
 
 # Home page
 @login_required
 def semester(request, year, semester):
-    # ordered_classes = Classes.objects.order_by('cid')
-    # current_classes = ordered_classes.filter(session__semester=semester, session__year=year)
-    current_classes = Session.objects.filter(semester=semester, year=year)
 
-    #if request.user.has_perm('professors.can_add_professors'):
+    # TODO: need to exclude my_classes from all_classes
+    #       (.exclude() doesnt' work (yet) my_classes is from Teach and all_classes is from Enroll)
+    all_classes = Session.objects.filter(semester=semester, year=year)
 
-    # this is kinda messy/can def be cleaned up
-    if request.user.groups.filter(name='Professors').exists():
-        user_id = Professors.objects.get(email=request.user.email)
-        context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : user_id.fid}
+    if isProfessor(request):
+        my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
+        context = {'all_classes': all_classes, 'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
         return render(request, 'takai/semester_prof.html', context)
     else:
-        user_id = Students.objects.get(email=request.user.email)
-        context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : user_id.sid}
-        return render(request, 'takai/semester.html', context) # TODO: TO CHANGE BACK!!! (to semester.html)
+        my_classes = Enroll.objects.filter(session__semester=semester, session__year=year, student__sid=getUserId(request))
+        context = {'all_classes': all_classes, 'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
+        return render(request, 'takai/semester.html', context)
 
 # Class page
 @login_required
@@ -72,26 +80,33 @@ def search(request):
         return render(request, 'takai/search.html')
 
 
-def enroll(request, year, semester, cid):
-    #student = get_object_or_404(Students, pk=request.POST['student_id_field'])
-    #session = get_object_or_404(Session, pk=cid)
+@login_required
+def teach(request, year, semester, cid):
+    prof = Professors.objects.get(fid=getUserId(request))
+    session = Session.objects.get(theclass=cid)
 
-    # user_id_set = Students.objects.get(email=request.user.email)
-    # user_id = int(str(user_id_set.sid))
-    student = Students.objects.get(pk=request.POST['student_id_field'])
-    session = Session.objects.get(theclass=cid) # (pk=cid)
-    #pdb.set_trace()
-    try:
-        returned_student_id = student.sid
-    except (KeyError,Students.DoesNotExist):
-        return render(request, 'takai/semester.html',{
-        'student id': returned_student_id,
-        'error message': "This is not a valid student id.",
-            })
+    if (Teach.objects.filter(professor=prof, session=session)):
+        all_classes = Session.objects.filter(semester=semester, year=year)
+        context = {'all_classes': all_classes, 'year': year, 'semester':semester, 'user_id' : prof.fid}
+        return render(request, 'takai/semester.html', context)
+    else:
+        teaching = Teach.objects.create(professor = prof, session=session,)
+        teaching.save()
+        return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+
+@login_required
+def enroll(request, year, semester, cid):
+    student = Students.objects.get(sid=getUserId(request))
+    session = Session.objects.get(theclass=cid)
+
+    if (Enroll.objects.filter(student=student, session=session)):
+        all_classes = Session.objects.filter(semester=semester, year=year)
+        context = {'all_classes': all_classes, 'year': year, 'semester':semester, 'user_id' : student.sid}
+        return render(request, 'takai/semester.html', context)
     else:
         enrollment = Enroll.objects.create(student = student, session=session,)
-        #pdb.set_trace()
         enrollment.save()
+        return HttpResponseRedirect(reverse('semester', args = (year,semester)))
 
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
 
