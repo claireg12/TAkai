@@ -58,7 +58,7 @@ class Enroll(models.Model):
         unique_together = (('student','session'),)
 
     def __str__(self):
-        return str(self.sid) + ' ' + str(self.cid)
+        return str(self.student.sid) + ' ' + str(self.session.theclass.cid)
 
 
 class Professors(models.Model):

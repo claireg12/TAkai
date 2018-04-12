@@ -29,11 +29,18 @@ def getUserId(request):
 # Home page
 @login_required
 def semester(request, year, semester):
-    current_classes = Session.objects.filter(semester=semester, year=year)
-    context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
+
+    # TODO: need to exclude my_classes from all_classes
+    #       (.exclude() doesnt' work (yet) my_classes is from Teach and all_classes is from Enroll)
+    all_classes = Session.objects.filter(semester=semester, year=year)
+
     if isProfessor(request):
+        my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
+        context = {'all_classes': all_classes, 'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
         return render(request, 'takai/semester_prof.html', context)
     else:
+        my_classes = Enroll.objects.filter(session__semester=semester, session__year=year, student__sid=getUserId(request))
+        context = {'all_classes': all_classes, 'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
         return render(request, 'takai/semester.html', context)
 
 # Class page
@@ -76,8 +83,8 @@ def teach(request, year, semester, cid):
     session = Session.objects.get(theclass=cid)
 
     if (Teach.objects.filter(professor=prof, session=session)):
-        current_classes = Session.objects.filter(semester=semester, year=year)
-        context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : prof.fid}
+        all_classes = Session.objects.filter(semester=semester, year=year)
+        context = {'all_classes': all_classes, 'year': year, 'semester':semester, 'user_id' : prof.fid}
         return render(request, 'takai/semester.html', context)
     else:
         teaching = Teach.objects.create(professor = prof, session=session,)
@@ -90,8 +97,8 @@ def enroll(request, year, semester, cid):
     session = Session.objects.get(theclass=cid)
 
     if (Enroll.objects.filter(student=student, session=session)):
-        current_classes = Session.objects.filter(semester=semester, year=year)
-        context = {'current_classes': current_classes, 'year': year, 'semester':semester, 'user_id' : student.sid}
+        all_classes = Session.objects.filter(semester=semester, year=year)
+        context = {'all_classes': all_classes, 'year': year, 'semester':semester, 'user_id' : student.sid}
         return render(request, 'takai/semester.html', context)
     else:
         enrollment = Enroll.objects.create(student = student, session=session,)

@@ -29,10 +29,26 @@
 <h1><a href="/takai/">TAkai</a></li>
 <h2>{{semester}} {{year}} Courses</h2>
 
+<h3>My Courses</h3>
+{% if my_classes %}
+    <ul> 
+    {% for classes in my_classes %}
+        <li><a href="/takai/{{year}}{{semester}}/{{classes.session.theclass.cid}}">CS{{ classes.session.theclass.cid }}: {{classes.session.theclass.name}} </a>
+            <form class = "form" method="get">
+                {% csrf_token %}
+                <input type="button" disabled="True" value="Enrolled">
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <ul><li>Not currently enrolled in any courses</li></ul>
+{% endif %}
 
-{% if current_classes %}
+<h3>Other Courses</h3>
+{% if all_classes %}
     <ul>
-    {% for classes in current_classes %}
+    {% for classes in all_classes %}
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
             <form class = "form" action="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}/enroll/" method="post">
                 {% csrf_token %}
