@@ -30,17 +30,17 @@ def getUserId(request):
 @login_required
 def semester(request, year, semester):
 
-    # TODO: need to exclude my_classes from all_classes
-    #       (.exclude() doesnt' work (yet) my_classes is from Teach and all_classes is from Enroll)
     all_classes = Session.objects.filter(semester=semester, year=year)
 
     if isProfessor(request):
-        my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
-        context = {'all_classes': all_classes, 'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
+        my_classes = Session.objects.filter(teach__professor__fid=getUserId(request), semester=semester, year=year)
+        other_classes = set(all_classes).difference(set(my_classes))
+        context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes}
         return render(request, 'takai/semester_prof.html', context)
     else:
-        my_classes = Enroll.objects.filter(session__semester=semester, session__year=year, student__sid=getUserId(request))
-        context = {'all_classes': all_classes, 'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request)}
+        my_classes = Session.objects.filter(enroll__student__sid=getUserId(request), semester=semester, year=year)
+        other_classes = set(all_classes).difference(set(my_classes))
+        context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes}
         return render(request, 'takai/semester.html', context)
 
 # Class page
@@ -80,41 +80,47 @@ def search(request):
         return render(request, 'takai/search.html')
 
 
+# When a professor wants to teach a course
 @login_required
 def teach(request, year, semester, cid):
     prof = Professors.objects.get(fid=getUserId(request))
     session = Session.objects.get(theclass=cid)
 
-    if (Teach.objects.filter(professor=prof, session=session)):
-        all_classes = Session.objects.filter(semester=semester, year=year)
-        context = {'all_classes': all_classes, 'year': year, 'semester':semester, 'user_id' : prof.fid}
-        return render(request, 'takai/semester.html', context)
-    else:
-        teaching = Teach.objects.create(professor = prof, session=session,)
-        teaching.save()
-        return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+    # if (Teach.objects.filter(professor=prof, session=session)):
+    #     all_classes = Session.objects.filter(semester=semester, year=year)
+    #     my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
+    #     context = {'all_classes': all_classes, year: year, 'semester':semester, 'user_id' : prof.fid}
+    #     return render(request, 'takai/semester_prof.html', context)
+    # else:
 
+    teaching = Teach.objects.create(professor = prof, session=session,)
+    teaching.save()
+    return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+
+# When a student wants to enroll in a course
 @login_required
 def enroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
     session = Session.objects.get(theclass=cid)
 
-    if (Enroll.objects.filter(student=student, session=session)):
-        all_classes = Session.objects.filter(semester=semester, year=year)
-        context = {'all_classes': all_classes, 'year': year, 'semester':semester, 'user_id' : student.sid}
-        return render(request, 'takai/semester.html', context)
-    else:
-        enrollment = Enroll.objects.create(student = student, session=session,)
-        enrollment.save()
-        return HttpResponseRedirect(reverse('semester', args = (year,semester)))
-
+    # if (Enroll.objects.filter(student=student, session=session)):
+    #     all_classes = Session.objects.filter(semester=semester, year=year)
+    #     my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
+    #     context = {'all_classes': all_classes,'year': year, 'semester':semester, 'user_id' : student.sid}
+    #     return render(request, 'takai/semester.html', context)
+    # else:
+    enrollment = Enroll.objects.create(student = student, session=session,)
+    enrollment.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+
+    # return HttpResponseRedirect(reverse('semester', args = (year,semester)))
 
 # How a prof assigns a TA to a class
 # If the student is not a TA yet, adds it as a TA and as a mentor for that class
 def prof(request, year, semester, cid):
     student = Students.objects.get(name=request.POST.get('student_name_field', False))
     session = Session.objects.get(theclass=cid)
+
     try:
         returned_student_name = student.name
     except (KeyError, Students.DoesNotExist):

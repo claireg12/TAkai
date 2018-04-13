@@ -33,7 +33,7 @@
 {% if my_classes %}
     <ul>
     {% for classes in my_classes %}
-        <li><a href="/takai/{{year}}{{semester}}/{{classes.session.theclass.cid}}">CS{{ classes.session.theclass.cid }}: {{classes.session.theclass.name}} </a>
+        <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
             <form class = "form" method="get">
                 {% csrf_token %}
                 <input type="button" disabled="True" value="Enrolled">
@@ -46,9 +46,9 @@
 {% endif %}
 
 <h3>Other Courses</h3>
-{% if all_classes %}
+{% if other_classes %}
     <ul>
-    {% for classes in all_classes %}
+    {% for classes in other_classes %}
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
             <form class = "form" action="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}/enroll/" method="post">
                 {% csrf_token %}
