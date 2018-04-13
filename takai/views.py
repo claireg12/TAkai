@@ -16,11 +16,11 @@ from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professor
 from .forms import UpdateProfessorInfo, UpdateSessionInfo
 import pdb
 
-def isProfessor(request):
-    return request.user.groups.filter(name='Professors').exists()
+def isProfessor(user):
+    return user.groups.filter(name='Professors').exists()
 
 def getUserId(request):
-    if isProfessor(request):
+    if isProfessor(request.user):
         user_id = Professors.objects.get(email=request.user.email).fid
     else:
         user_id = Students.objects.get(email=request.user.email).sid
@@ -33,15 +33,15 @@ def semester(request, year, semester):
 
     all_classes = Session.objects.filter(semester=semester, year=year)
 
-    if isProfessor(request):
+    if isProfessor(request.user):
         my_classes = Session.objects.filter(teach__professor__fid=getUserId(request), semester=semester, year=year)
         other_classes = set(all_classes).difference(set(my_classes))
-        context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes}
+        context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes, 'name':request.user.first_name}
         return render(request, 'takai/semester_prof.html', context)
     else:
         my_classes = Session.objects.filter(enroll__student__sid=getUserId(request), semester=semester, year=year)
         other_classes = set(all_classes).difference(set(my_classes))
-        context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes}
+        context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes, 'name':request.user.first_name}
         return render(request, 'takai/semester.html', context)
 
 # Class page
@@ -54,7 +54,7 @@ def session(request, year, semester, cid):
         profs = Teach.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
 
-        context = {'some_session': some_session, 'some_class': some_class,'year': year, 'semester': semester, 'tas': tas, 'profs': profs, 'mentorsessions': mentorsessions} # removed teach
+        context = {'some_session': some_session, 'some_class': some_class,'year': year, 'semester': semester, 'tas': tas, 'profs': profs, 'mentorsessions': mentorsessions, 'name':request.user.first_name} # removed teach
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
     # except Teach.DoesNotExist:
@@ -64,8 +64,8 @@ def session(request, year, semester, cid):
     else:
         return render(request, 'takai/session.html', context)
 
-#check if permissions for this are right
-
+# TODO: why doesn't this permission work?
+# @user_passes_test(isProfessor)
 class UpdateSession(UpdateView):
     model = Session
     template_name_suffix = '_edit_prof'
@@ -110,19 +110,23 @@ class UpdateSession(UpdateView):
 
 # Profile page
 @login_required
-@permission_required('professors.can_add_professors', raise_exception=True)
+# TODO: this should redirect to session page (ie just stay on same page), instead of redirecting to semester page, which is default
+@user_passes_test(isProfessor)
+# @permission_required('professors.can_add_professors', raise_exception=True)
 def profile(request, sid):
     try:
         some_ta = Students.objects.get(pk=sid)
     except Students.DoesNotExist:
         raise Http404("Student does not exist")
-    return render(request, 'takai/profile.html', {'some_ta': some_ta})
+    return render(request, 'takai/profile.html', {'some_ta': some_ta, 'name':request.user.first_name})
 
 # Search page
 @login_required
-@permission_required('professors.can_add_professors', raise_exception=True)
+# TODO: this should redirect to session page (ie just stay on same page), instead of redirecting to semester page, which is default
+@user_passes_test(isProfessor)
+#@permission_required('professors.can_add_professors', raise_exception=True)
 def search(request):
-        return render(request, 'takai/search.html')
+        return render(request, 'takai/search.html', {'name':request.user.first_name})
 
 
 # When a professor wants to teach a course
