@@ -1,0 +1,20 @@
+<form method="post" action="">
+    {% csrf_token %}
+    {{ formset }}
+    <input type="submit" value="Submit" />
+</form>
+
+
+<!-- {% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    {{ prof_form.as_table }}
+    </table>
+    <input type="submit" value="Submit" />
+
+</form>
+
+{% endblock %} -->

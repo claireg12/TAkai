@@ -6,7 +6,18 @@
 
   <h1><a href="/takai/">TAkai</a></li>
 
+<p>
+    <form method="post" action="">
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {% for field in form %}
+            {{ field.label_tag }} {{ field }}<br/>
+        {% endfor %}
+    {% endfor %}
+    <input type="submit" value="Submit" />
+    </form>
 
+</p>
 </body>
 
 </html>

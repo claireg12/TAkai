@@ -11,9 +11,10 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
+from django.forms import ModelForm, modelformset_factory
 
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta
-from .forms import UpdateProfessorInfo, UpdateSessionInfo
+from .forms import UpdateProfessorInfo, UpdateSessionInfo, ClassesForm
 import pdb
 
 def isProfessor(user):
@@ -107,6 +108,22 @@ class UpdateSession(UpdateView):
             return super(UpdateSession, self).post(request, *args, **kwargs)
 
 
+def TaApplication(request): #or class (CreateView)
+    model = Classes
+    template_name_suffix = '_apply' #is it being used?
+    ClassesFormSet = modelformset_factory(Classes, fields=('cid', 'name'))
+    if request.method == 'POST':
+        formset = ClassesFormSet(
+        request.POST, request.FILES,
+        queryset=Classes.objects.all(), # change to none? not sure
+        )
+        if formset.is_valid():
+            formset.save()
+    else:
+        formset = ClassesFormSet(queryset=Classes.objects.none()) # TO FIX
+
+    return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset': formset})
+    # how to redirect to the semester page?
 
 # Profile page
 @login_required

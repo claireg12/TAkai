@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search'),
 
     # ex: /takai/apply
-     url(r'^apply/$', views.apply, name='apply'),
+     url(r'^apply/$', views.TaApplication, name='apply'),
 
     url(r'^login/$', auth_views.login, name='login'),
 
