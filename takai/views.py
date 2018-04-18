@@ -166,6 +166,7 @@ def enroll(request, year, semester, cid):
 
 # How a prof assigns a TA to a class
 # If the student is not a TA yet, adds it as a TA and as a mentor for that class
+@login_required
 def prof(request, year, semester, cid):
 
     session1 = Session.objects.get(theclass=cid)
@@ -184,3 +185,8 @@ def prof(request, year, semester, cid):
         assignment2.save()
 
     return session(request, year, semester, cid)
+
+
+def apply(request):
+
+    return render(request, 'takai/apply.html')

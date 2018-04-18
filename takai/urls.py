@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search'),
 
     # ex: /takai/apply
-     url(r'^apply/$', views.search, name='apply'),
+     url(r'^apply/$', views.apply, name='apply'),
 
     url(r'^login/$', auth_views.login, name='login'),
 
@@ -39,4 +39,3 @@ urlpatterns = [
 
     url(r'^logout/$', auth_views.logout, {'template_name': 'registration/logout.html'}, name='logout'),
 ]
-    
