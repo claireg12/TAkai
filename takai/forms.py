@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from takai.models import Professors,Session, Classes
+from takai.models import Professors,Session, Classes, Application
 
 class UpdateProfessorInfo(forms.ModelForm):
      class Meta:
@@ -17,3 +17,8 @@ class ClassesForm(ModelForm):
     class Meta:
         model = Classes
         fields = ['cid', 'name']
+
+class ApplicationForm(ModelForm):
+    class Meta:
+        model = Application
+        fields = ['student', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability']

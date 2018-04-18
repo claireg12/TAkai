@@ -13,8 +13,8 @@ from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 from django.forms import ModelForm, modelformset_factory
 
-from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta
-from .forms import UpdateProfessorInfo, UpdateSessionInfo, ClassesForm
+from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta, Application
+from .forms import UpdateProfessorInfo, UpdateSessionInfo, ClassesForm, ApplicationForm
 import pdb
 
 def isProfessor(user):
@@ -109,21 +109,21 @@ class UpdateSession(UpdateView):
 
 
 def TaApplication(request): #or class (CreateView)
-    model = Classes
-    template_name_suffix = '_apply' #is it being used?
-    ClassesFormSet = modelformset_factory(Classes, fields=('cid', 'name'))
+    #model = Classes
+    #template_name_suffix = '_apply' #is it being used?
+    ApplicationFormSet = modelformset_factory(Application, fields=('student', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability'))
     if request.method == 'POST':
-        formset = ClassesFormSet(
+        formset = ApplicationFormSet(
         request.POST, request.FILES,
-        queryset=Classes.objects.all(), # change to none? not sure
+        queryset=Application.objects.all(), # change to none? not sure
         )
         if formset.is_valid():
             formset.save()
     else:
-        formset = ClassesFormSet(queryset=Classes.objects.none()) # TO FIX
+        formset = ApplicationFormSet(queryset=Application.objects.none()) # TO FIX
 
     return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset': formset})
-    # how to redirect to the semester page?
+    # how to redirect to the semester page??
 
 # Profile page
 @login_required
@@ -202,8 +202,3 @@ def prof(request, year, semester, cid):
         assignment2.save()
 
     return session(request, year, semester, cid)
-
-
-def apply(request):
-
-    return render(request, 'takai/apply.html')
