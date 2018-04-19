@@ -29,10 +29,10 @@ def getUserId(request):
 
 def isTA(pk):
     try:
-        ta = TA.objects.get(pk=pk)
-        return true
+        ta = Ta.objects.get(pk=pk)
+        return True
     except User.DoesNotExist:
-        return false
+        return False
 
 # Home page
 @login_required
@@ -83,7 +83,7 @@ class UpdateSession(UpdateView):
     def get_success_url(self):
         session_id = self.kwargs['pk']
         some_session = Session.objects.get(pk=session_id)
-        return reverse_lazy('semester', args = (some_session.year,some_session.semester))
+        return reverse_lazy('session', args = (some_session.year,some_session.semester,some_session.theclass.cid))
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSession, self).get_context_data(**kwargs)
@@ -114,23 +114,31 @@ class UpdateSession(UpdateView):
         else:
             return super(UpdateSession, self).post(request, *args, **kwargs)
 
-class UpdateMentor(UpdateView):
-    model = Host
-    template_name_suffix = '_edit_mentor_session'
-    form_class = UpdateHostInfo
+class UpdateMentorSession(UpdateView):
+    model = Mentorsessions
+    template_name_suffix = '_edit'
+    form_class = UpdateMSInfo
 
+    def get_success_url(self):
+        return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
+
+#not really working
 class UpdateTa(UpdateView):
     model = Ta
-    template_name_suffix = '_ta_edit'
+    template_name_suffix = '_edit'
     form_class = UpdateTaInfo
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateSession, self).get_context_data(**kwargs)
+        context = super(UpdateTa, self).get_context_data(**kwargs)
+        #pdb.set_trace()
+
         if isTA(self.kwargs['pk']):
             return context
         else:
             raise Http404("You need TA permissions to edit this")
 
+    def get_success_url(self):
+        return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
 
 # Profile page

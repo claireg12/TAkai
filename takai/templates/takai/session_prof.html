@@ -30,7 +30,7 @@
     <li>Mentor Sessions:
         <ul>
         {% for mentorsesh in mentorsessions %}
-            <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.student.name}} </li>
+            <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} </li>
         {% endfor %}
         </ul>
     </li>

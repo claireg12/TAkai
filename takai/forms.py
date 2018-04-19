@@ -13,14 +13,19 @@ class UpdateSessionInfo(forms.ModelForm):
     class Meta:
         model = Session
         fields = ['theclass', 'semester', 'year','classroom','times']
+        labels = {
+            'theclass': ('Class'),
+        }
 
-class UpdateHostInfo(forms.ModelForm):
+class UpdateMSInfo(forms.ModelForm):
     class Meta:
-        model = Host
-        fields = ['ta', 'mentorsesh']
-
+        model = Mentorsessions
+        fields = ['time', 'day','location']
 
 class UpdateTaInfo(forms.ModelForm):
     class Meta:
         model = Ta
         fields = ['student', 'bio']
+        error_messages = {
+            'unique': 'You do not have permissions to edit other TAs or TA already exists',
+        }

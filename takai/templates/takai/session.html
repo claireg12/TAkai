@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head>
+<script src="jquery-3.3.1.min.js"></script>
   <link rel="stylesheet" type="text/css" href="session.css"> <!-- doesn't work -->
 </head>
 
 <body>
-<div style="float:right"> <a href="/takai/logout/">Logout</a> </div>
+<div style="float:right"> <a href="/takai/logout/">Logout </a> {{user.first_name}} {{user.last_name}} </div> 
 
 <h1><a href="/takai/">TAkai</a></li>
 <h2> {{ semester }} {{ year }} </h2>
@@ -27,18 +27,29 @@
             {{prof.professor.officehours}} <br/>
         {% endfor %}
     </li>
-<div style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid some_session.pk %}">Edit Mentor Session</a> </div>
     <li>Mentor Sessions:
         <ul>
         {% for mentorsesh in mentorsessions %}
-            <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.student.name}} </li>
+            <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} </li>
+            <div style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
         {% endfor %}
         </ul>
     </li>
-<div style="float:right"> <a href="{% url 'ta-edit' year semester user.id %}">Edit TA Information</a> </div>
     <li>TAs:
         <ul>
         {% for ta in tas %}
+            <div id="edit_ta" style='display:none'> <a href="{% url 'ta-edit' year semester some_class.cid ta.ta.pk %}">Edit TA Information </a> </div>
+            <script type="text/javascript">
+                if (window.document.readyState = "complete"){
+                    var TA_email = "{{ta.ta.student.email}}"
+                    var USER_email = "{{user.email}}"
+                    var ta_link = document.getElementById("edit_ta");
+                    if (TA_email == USER_email) {
+                        ta_link.style.visibility = 'visible';
+                        ta_link.style.display = 'inline';
+                    }
+                }
+            </script>
             <li><a href="/takai/{{ta.student.student.sid}}"> {{ta.ta.student.name}}</a>: {{ta.ta.bio}} </li>
         {% endfor %}
         </ul>
