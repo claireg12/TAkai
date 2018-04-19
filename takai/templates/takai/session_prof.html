@@ -5,11 +5,13 @@
 </head>
 
 <body>
-<div style="float:right"> <a href="/takai/logout/">Logout</a> </div>
+<div style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
 
 <h1><a href="/takai/">TAkai</a></li>
 <h2> {{ semester }} {{ year }} </h2>
 <h2>CS{{some_class.cid}}: {{ some_class.name }} </h2>
+
+<div style="float:right"> <a href="{% url 'session-faculty-edit' year semester some_class.cid some_session.pk %}">Edit Class</a> </div>
 
 <ul>
 {% for session in some_class.session_set.all %}

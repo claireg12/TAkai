@@ -140,6 +140,21 @@ class Host(models.Model):
         managed = True
         db_table = 'Host'
 
+class Application(models.Model):
+    student = models.ForeignKey(Students, on_delete=models.CASCADE, blank=False, null=False)
+    school = models.CharField(max_length=50, blank=False, null=False)
+    major = models.CharField(max_length=100, blank=False, null=False)
+    qualities = models.CharField(max_length=1500, blank=False, null=False)
+    num_hours_week = models.FloatField()
+    lab_availability = models.CharField(max_length=100, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.student.name) + ' ' + str(self.school) + ' ' + str(self.major)
+
+    class Meta:
+        managed = True
+        db_table = 'Application'
+
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=80)

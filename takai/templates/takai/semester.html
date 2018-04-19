@@ -24,16 +24,18 @@
 
 <body>
 
-<div style="float:right"> <a href="/takai/logout/">Logout </a> {{user.first_name}} {{user.last_name}} </div>
+<div style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
 
 <h1><a href="/takai/">TAkai</a></li>
 <h2>{{semester}} {{year}} Courses</h2>
+
+<a href="/takai/apply/"> Apply to be a TA! </a>
 
 <h3>My Courses</h3>
 {% if my_classes %}
     <ul>
     {% for classes in my_classes %}
-        <li><a href="/takai/{{year}}{{semester}}/{{classes.session.theclass.cid}}">CS{{ classes.session.theclass.cid }}: {{classes.session.theclass.name}} </a>
+        <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
             <form class = "form" method="get">
                 {% csrf_token %}
                 <input type="button" disabled="True" value="Enrolled">
@@ -46,9 +48,9 @@
 {% endif %}
 
 <h3>Other Courses</h3>
-{% if all_classes %}
+{% if other_classes %}
     <ul>
-    {% for classes in all_classes %}
+    {% for classes in other_classes %}
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
             <form class = "form" action="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}/enroll/" method="post">
                 {% csrf_token %}
