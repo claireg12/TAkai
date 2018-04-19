@@ -11,17 +11,12 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
-<<<<<<< HEAD
 from django.contrib import messages
 
-from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta
+from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta,Application
 from .forms import *
-=======
 from django.forms import ModelForm, modelformset_factory
 
-from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta, Application
-from .forms import UpdateProfessorInfo, UpdateSessionInfo, ClassesForm, ApplicationForm
->>>>>>> 801d6dcf3ad2adfc4f571aedfd07626abda0748e
 import pdb
 
 def isProfessor(user):
@@ -78,12 +73,9 @@ def session(request, year, semester, cid):
     else:
         return render(request, 'takai/session.html', context)
 
-<<<<<<< HEAD
-#check if permissions for this are right
-=======
 # TODO: why doesn't this permission work?
 # @user_passes_test(isProfessor)
->>>>>>> 801d6dcf3ad2adfc4f571aedfd07626abda0748e
+
 class UpdateSession(UpdateView):
     model = Session
     template_name_suffix = '_edit_prof'

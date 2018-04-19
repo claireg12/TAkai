@@ -1,11 +1,7 @@
 from django import forms
 from django.forms import ModelForm
-<<<<<<< HEAD
 from django.contrib.messages.views import SuccessMessageMixin
 from takai.models import *
-=======
-from takai.models import Professors,Session, Classes, Application
->>>>>>> 801d6dcf3ad2adfc4f571aedfd07626abda0748e
 
 class UpdateProfessorInfo(forms.ModelForm):
     class Meta:
@@ -27,6 +23,13 @@ class UpdateMSInfo(forms.ModelForm):
         fields = ['time', 'day','location']
 
 class UpdateTaInfo(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateTaInfo, self).__init__(*args, **kwargs)
+
+        # add custom error messages
+        self.fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
+
     class Meta:
         model = Ta
         fields = ['student', 'bio']
