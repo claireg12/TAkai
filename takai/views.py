@@ -50,7 +50,10 @@ def semester(request, year, semester):
     else:
         my_classes = Session.objects.filter(enroll__student__sid=getUserId(request), semester=semester, year=year)
         other_classes = set(all_classes).difference(set(my_classes))
-        context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes, 'name':request.user.first_name}
+        mentor_classes = Session.objects.filter(mentor__ta__student__sid=getUserId(request), semester=semester, year=year)
+        # other_classes = set(o_classes).difference(set(mentor_classes))
+
+        context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes, 'name':request.user.first_name, 'mentor_classes':mentor_classes}
         return render(request, 'takai/semester.html', context)
 
 # Class page
@@ -138,6 +141,12 @@ class UpdateTa(UpdateView):
             return context
         else:
             raise Http404("You need TA permissions to edit this")
+
+    def get_success_url(self):
+        return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
+
+class DeleteTa(DeleteView):
+    model = Mentor
 
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))

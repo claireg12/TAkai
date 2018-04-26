@@ -21,6 +21,9 @@ urlpatterns = [
     # session for professors (can add TAs)
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/prof/$', views.prof, name='session-prof'),
 
+    # session for professors - delete ta
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/prof/(?P<pk>\d+)/delete-ta/$', views.DeleteTa.as_view(), name='ta-delete'),
+
      # ex: /takai/2018Spring/140/edit/faculty
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit/faculty/$', views.UpdateSession.as_view(), name='session-faculty-edit'),
 
@@ -28,7 +31,7 @@ urlpatterns = [
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit/mentorsession/$', views.UpdateMentorSession.as_view(), name='session-mentor-edit'),
 
     # ex: /takai/2018Spring/140/(ta_id)/edit
-    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit/ta/$', views.UpdateTa.as_view(), name='ta-edit'),
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit-ta/$', views.UpdateTa.as_view(), name='ta-edit'),
 
     # ex: /takai/010314573/
     url(r'^(?P<sid>[0-9]{8})/$', views.profile, name='profile'),
