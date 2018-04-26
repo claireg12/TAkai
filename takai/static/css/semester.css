@@ -1,0 +1,45 @@
+/*h1 a {
+    color: green;
+}
+
+h1 a:visited {
+    color: purple;
+}
+
+form {
+    display: inline;
+}
+
+button {
+    display: inline;
+    text-align: right;
+    padding: 15px 25px;
+}
+*/
+body {
+    background-color: steelblue;
+    padding-left: 15px;
+}
+
+.page-header {
+    background-color: lightsteelblue;
+    margin-top: 0;
+    padding: 20px 20px 20px 40px;
+    font-family: 'Do Hyeon', sans-serif;
+    font-size: 40px;
+    color: white;
+
+}
+
+.login-header {
+    padding-right: 20px;
+    padding-top: 20px;
+}
+
+.edit-pages {
+    padding-right: 20px;
+}
+
+.page-content{
+    padding-left: 20px;
+}

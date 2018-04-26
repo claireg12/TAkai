@@ -142,6 +142,12 @@ class UpdateTa(UpdateView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
+class DeleteTa(DeleteView):
+    model = Mentor
+
+    def get_success_url(self):
+        return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
+
 def TaApplication(request): #or class (CreateView)
     #model = Classes
     #template_name_suffix = '_apply' #is it being used?

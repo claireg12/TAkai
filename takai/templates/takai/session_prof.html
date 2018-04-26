@@ -1,7 +1,13 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
   <!--link rel="stylesheet" type="text/css" href="session.css"> < doesn't work -->
+<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{% static 'css/session.css' %}">
+<script src="jquery-3.3.1.min.js"></script>
 </head>
 
 <body>
@@ -42,6 +48,13 @@
         <ul>
         {% for ta in tas %}
             <li><a href="/takai/{{ta.ta.student.sid}}"> {{ta.ta.student.name}}</a>: {{ta.ta.bio}} </li>
+            <form action ="{% url 'ta-delete' year semester some_class.cid ta.pk %}" method = "post" style = "display: inline;">
+                {% csrf_token %}
+                <input type = "hidden" name = "ta_id" value = "{{ta.pk}}"/>
+                <button type = "submit" class = "btn btn-default btn-sm">
+                    <span class = "glyphicon glyphicon-trash"></span>
+                </button>
+            </form>
         {% endfor %}
         </ul>
     </li>
