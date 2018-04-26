@@ -13,7 +13,7 @@ from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 
-from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta,Application
+from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta#,Application, Classinterest, Interestcode
 from .forms import *
 from django.forms import ModelForm, modelformset_factory
 
@@ -146,17 +146,26 @@ def TaApplication(request): #or class (CreateView)
     #model = Classes
     #template_name_suffix = '_apply' #is it being used?
     ApplicationFormSet = modelformset_factory(Application, fields=('student', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability'))
+    ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'))
     if request.method == 'POST':
-        formset = ApplicationFormSet(
+        formset1 = ApplicationFormSet(
         request.POST, request.FILES,
         queryset=Application.objects.all(), # change to none? not sure
         )
-        if formset.is_valid():
-            formset.save()
+        formset2 = ClassinterestFormSet(
+        request.POST, request.FILES,
+        queryset=Classinterest.objects.all(), # change to none? not sure
+        )
+        if formset1.is_valid():
+            formset1.save()
+        if formset2.is_valid():
+            formset2.save()
     else:
-        formset = ApplicationFormSet(queryset=Application.objects.none()) # TO FIX
+        formset1 = ApplicationFormSet(queryset=Application.objects.none())
+        formset2 = ClassinterestFormSet(queryset=Classinterest.objects.none())
 
-    return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset': formset})
+
+    return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
     # how to redirect to the semester page??
 
 # Profile page

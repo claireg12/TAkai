@@ -129,7 +129,7 @@ class Teach(models.Model):
         db_table = 'Teach'
 
 class Host(models.Model):
-    ta = models.ForeignKey(Ta, on_delete=models.CASCADE, blank=False, null=False)
+    ta = models.ForeignKey(Ta, on_delete=models.CASCADE, blank=False, null=False) # should be mentor
     session = models.ForeignKey(Session, on_delete=models.CASCADE, blank=False, null=False)
     mentorsesh = models.ForeignKey(Mentorsessions, on_delete=models.CASCADE, blank=False, null=False)
 
@@ -142,11 +142,14 @@ class Host(models.Model):
 
 class Application(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE, blank=False, null=False)
+    semester = models.CharField(max_length=255,blank=False, null=False)
+    year = models.CharField(max_length=255, blank=False, null=False)
     school = models.CharField(max_length=50, blank=False, null=False)
     major = models.CharField(max_length=100, blank=False, null=False)
     qualities = models.CharField(max_length=1500, blank=False, null=False)
     num_hours_week = models.FloatField()
     lab_availability = models.CharField(max_length=100, blank=False, null=False)
+    # class_interest = models.ForeignKey(Classinterest, on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):
         return str(self.student.name) + ' ' + str(self.school) + ' ' + str(self.major)
@@ -154,6 +157,32 @@ class Application(models.Model):
     class Meta:
         managed = True
         db_table = 'Application'
+
+class Interestcode(models.Model):
+    code = models.IntegerField(primary_key=True)
+    meaning = models.CharField(max_length=100, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.meaning)
+
+    class Meta:
+        managed = True
+        db_table = 'Interestcode'
+
+class Classinterest(models.Model):
+    student = models.ForeignKey(Students, on_delete=models.CASCADE, blank=False, null=False)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE, blank=False, null=False)
+    interestcode = models.ForeignKey(Interestcode, models.DO_NOTHING, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.student.name) + ' ' + str(self.session.theclass.cid) + ' ' + str(self.interestcode.meaning)
+
+    class Meta:
+        managed = True
+        db_table = 'Classinterest'
+
+# CREATE TABLE InterestCode(code int, meaning char (100))
+# CREATE TABLE ClassInterest(student int, session , interestcode int)
 
 
 class AuthGroup(models.Model):
