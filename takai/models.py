@@ -20,7 +20,6 @@ class Classes(models.Model):
         managed = True
         db_table = 'Classes'
 
-# should change student to ta
 class Mentor(models.Model):
     ta = models.ForeignKey('Ta', on_delete=models.CASCADE, blank=False, null=False) # should be renamed to ta
     session = models.ForeignKey('Session', on_delete=models.CASCADE, blank=False, null=False)
