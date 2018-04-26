@@ -3,10 +3,12 @@
 <html>
 <head>
 <link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
-<link href="//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-<link rel="stylesheet" href="{% static 'css/semester.css' %}" type="text/css">
+<link rel="stylesheet" href="{% static 'css/semester.css' %}">
+
+<script src="jquery-3.3.1.min.js"></script>
+
 <!-- <style>
 .button {
     background-color: #4CAF50;
@@ -38,7 +40,7 @@
 
 <h2>{{semester}} {{year}} Courses</h2>
 
-<a href="/takai/apply/"> Apply to be a TA! </a>
+<h4><a href="/takai/apply/"> Apply to be a TA! </a></h4>
 
 <h3>My Courses</h3>
 {% if my_classes %}

@@ -1,24 +1,30 @@
-/*h1 a {
-    color: green;
-}
-
-h1 a:visited {
-    color: purple;
-}
-
-form {
-    display: inline;
-}
-
-button {
-    display: inline;
-    text-align: right;
-    padding: 15px 25px;
-}
-*/
 body {
-    background-color: steelblue;
-    padding-left: 15px;
+    background-color: white;
+}
+
+h1 a {
+    color: white;
+    margin-left: 20px;
+}
+
+h2 {
+    margin-left: 20px;
+}
+
+h3 {
+    margin-left: 20px;
+}
+
+h4 {
+    margin-left: 20px;
+}
+
+ul {
+    margin-left: 20px;
+}
+
+li {
+    margin-left: 20px;
 }
 
 .page-header {
@@ -32,14 +38,14 @@ body {
 }
 
 .login-header {
-    padding-right: 20px;
-    padding-top: 20px;
+	padding-right: 20px;
+	padding-top: 20px;
 }
 
 .edit-pages {
-    padding-right: 20px;
+	padding-right: 20px;
 }
 
 .page-content{
-    padding-left: 20px;
+	padding-left: 20px;
 }

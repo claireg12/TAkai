@@ -1,33 +1,23 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head>
-	<style>
-.button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 15px 25px;
-    text-align: right;
-    font-size: 16px;
-    cursor: pointer;
-}
+<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{% static 'css/semester.css' %}">
 
-.button:hover {
-    background: green;
-}
-
-.form{
-    display: inline;
-}
-
-</style>
+<script src="jquery-3.3.1.min.js"></script>
 </head>
 
 <body>
 <!-- Logout Button -->
-<div style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
+<div class = "login-header" style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
 <!-- Takai Header -->
-<h1><a href="/takai/">TAkai</a></h1>
+<div class="page-header">
+    <h1><a href="/takai/">TAkai</a></li>
+</div>
+<div class="page-content">
 <!-- Search Bar -->
 <form action="/takai/search/" method="get">
     <input id="ta_search" type="text" name="name_field" value="Search for TA(s)">
@@ -69,5 +59,6 @@
 {% else %}
     <p>No classes are available.</p>
 {% endif %}
+</div>
 </body>
 </html>
