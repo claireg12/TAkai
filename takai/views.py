@@ -194,11 +194,11 @@ def profile(request, sid):
 @login_required
 def adv_search(request, year, semester):
     context = {'year': year, 'semester':semester, 'user_id' : getUserId(request), 'name':request.user.first_name}
-    results = Ta.objects.filter(Q(title__icontains=your_search_query) | Q(intro__icontains=your_search_query) | Q(content__icontains=your_search_query))
-
     try:
         time = request.POST.get('time', False)
         day = request.POST.get('day', False)
+        # change  to application once table is added
+        results = Application.objects.filter(Q(title__icontains=time) | Q(intro__icontains=day) | Q(content__icontains=your_search_query))
 
     except:
         raise Http404("Invalid Search")
