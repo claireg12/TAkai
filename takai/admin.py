@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import Classes, Session, Students, Enroll, Mentor, Mentorsessions, Professors, Ta, Teach, Host, Application
+from .models import Classes, Session, Students, Enroll, Mentor, Mentorsessions, Professors, Ta, Teach, Host, Application, Classinterest, Interestcode
 
 admin.site.register(Classes)
 admin.site.register(Session)
@@ -21,3 +21,5 @@ admin.site.register(Mentorsessions)
 admin.site.register(Professors)
 admin.site.register(Ta)
 admin.site.register(Application)
+admin.site.register(Classinterest)
+admin.site.register(Interestcode)
