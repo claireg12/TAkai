@@ -240,12 +240,16 @@ def profile(request, sid):
 # Search page
 @login_required
 def adv_search(request, year, semester):
-    context = {'year': year, 'semester':semester, 'user_id' : getUserId(request), 'name':request.user.first_name}
+    sessions = Session.objects.filter(semester=semester, year=year)
+    interests = Interestcode.objects.all()
+    context = {'year': year, 'semester':semester, 'sessions': sessions, 'interests':interests, 'user_id' : getUserId(request), 'name':request.user.first_name}
     try:
         time = request.POST.get('time', False)
         day = request.POST.get('day', False)
+        session = request.POST.get('session', False)
+        interest = request.POST.get('interest', False)
         # change  to application once table is added
-        results = Application.objects.filter(Q(title__icontains=time) | Q(intro__icontains=day) | Q(content__icontains=your_search_query))
+        #results = Application.objects.filter(Q(title__icontains=time) | Q(intro__icontains=day) | Q(content__icontains=your_search_query))
 
     except:
         raise Http404("Invalid Search")
