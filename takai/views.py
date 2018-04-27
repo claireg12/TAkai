@@ -12,13 +12,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-<<<<<<< HEAD
 from django.db.models import Q
-=======
+
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
 
->>>>>>> 1bd3618e1d6f86e4ebccf29b4a59451d8db47937
 
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta#,Application, Classinterest, Interestcode
 from .forms import *
