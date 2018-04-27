@@ -65,7 +65,7 @@ class ClassesForm(ModelForm):
 class ApplicationForm(ModelForm):
     class Meta:
         model = Application
-        fields = ['student', 'semester', 'year', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability']
+        fields = ['semester', 'year', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability']
 
 class ClassInterestForm(ModelForm):
     class Meta:
