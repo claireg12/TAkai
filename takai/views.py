@@ -12,6 +12,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from .forms import SignUpForm
+
 
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta,Application
 from .forms import *
@@ -19,11 +22,17 @@ from django.forms import ModelForm, modelformset_factory
 
 import pdb
 
+current_semester = "Spring"
+current_year = "2018"
+
 def isProfessor(user):
     return user.groups.filter(name='Professors').exists()
 
 def getUserId(request):
     if isProfessor(request.user):
+        # we're getting the student/professor object based on the email, but since it's not 
+        # required to be unique, you could have two users with same email, which would throw 
+        # an error
         user_id = Professors.objects.get(email=request.user.email).fid
     else:
         user_id = Students.objects.get(email=request.user.email).sid
@@ -76,9 +85,30 @@ def session(request, year, semester, cid):
     else:
         return render(request, 'takai/session.html', context)
 
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # Authenticate user and login 
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            # Add to Students table
+            grad_year = form.cleaned_data.get('graduation_year')
+            id_num = form.cleaned_data.get('id_number')
+            full_name = user.first_name + ' ' + user.last_name
+            student = Students.objects.create(sid = id_num, name=full_name, gradyear=grad_year, email=user.email)
+            student.save()
+            # Redirect to homepage for current semester
+            return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))
+    else:
+        form = SignUpForm()
+    return render(request, 'takai/signup.html', {'form': form})
+
 # TODO: why doesn't this permission work?
 # @user_passes_test(isProfessor)
-
 class UpdateSession(UpdateView):
     model = Session
     template_name_suffix = '_edit_prof'
@@ -245,3 +275,5 @@ def prof(request, year, semester, cid):
         assignment2.save()
 
     return session(request, year, semester, cid)
+
+

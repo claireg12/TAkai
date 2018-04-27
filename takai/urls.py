@@ -40,11 +40,13 @@ urlpatterns = [
     url(r'^search/$', views.search, name='search'),
 
     # ex: /takai/apply
-     url(r'^apply/$', views.TaApplication, name='apply'),
+    url(r'^apply/$', views.TaApplication, name='apply'),
 
     url(r'^login/$', auth_views.login, name='login'),
 
     url(r'^admin/', admin.site.urls),
 
     url(r'^logout/$', auth_views.logout, {'template_name': 'registration/logout.html'}, name='logout'),
+
+    url(r'^signup/$', views.signup, name='signup'),
 ]
