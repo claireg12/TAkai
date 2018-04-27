@@ -151,29 +151,37 @@ class DeleteTa(DeleteView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
-def TaApplication(request): #or class (CreateView)
+def TaApplication(request, year, semester): #or class (CreateView)
     #model = Classes
-    #template_name_suffix = '_apply' #is it being used?
-    ApplicationFormSet = modelformset_factory(Application, fields=('student', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability'))
-    ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'))
+    #template_name_suffix = '_apply' #is it being used?=
+    num_classes = Session.objects.count() # filter by semester
+    classes = Session.objects.all() # filter by semester
+    ApplicationFormSet = modelformset_factory(Application, fields=('student', 'semester', 'year', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability'))
+    ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'), extra=num_classes)
     if request.method == 'POST':
-        formset1 = ApplicationFormSet(
+        formset1 = ApplicationFormSet(#initial=[{'student':getUserId(request)}],
         request.POST, request.FILES,
+        initial=[{'student':getUserId(request)}],
         queryset=Application.objects.all(), # change to none? not sure
         )
         formset2 = ClassinterestFormSet(
         request.POST, request.FILES,
         queryset=Classinterest.objects.all(), # change to none? not sure
         )
+        # formset1.student = getUserId(request)
         if formset1.is_valid():
             formset1.save()
         if formset2.is_valid():
             formset2.save()
+        #return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+        #return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
     else:
-        formset1 = ApplicationFormSet(queryset=Application.objects.none())
-        formset2 = ClassinterestFormSet(queryset=Classinterest.objects.none())
-
-
+        initial2 = []
+        for sesh in classes:
+            initial2.append({'sesh': sesh})
+        #formset1 = ApplicationFormSet(queryset=Application.objects.none())
+        formset1 = ApplicationFormSet(initial=[{'student':getUserId(request), 'semester':"fall"}], queryset=Application.objects.none())
+        formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
     return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
     # how to redirect to the semester page??
 
