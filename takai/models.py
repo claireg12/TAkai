@@ -157,6 +157,28 @@ class Application(models.Model):
         managed = True
         db_table = 'Application'
 
+class Availabilitycode(models.Model):
+    code = models.IntegerField(primary_key=True)
+    meaning = models.CharField(max_length=100, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.meaning)
+
+    class Meta:
+        managed = True
+        db_table = 'Availabilitycode'
+
+class Availability(models.Model):
+    student = models.ForeignKey(Students, on_delete=models.CASCADE, blank=False, null=False)
+    availabilitycode = models.ForeignKey(Availabilitycode, models.DO_NOTHING, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.student.name) + ' ' + str(self.availabilitycode.meaning)
+
+    class Meta:
+        managed = True
+        db_table = 'Availability'
+
 class Interestcode(models.Model):
     code = models.IntegerField(primary_key=True)
     meaning = models.CharField(max_length=100, blank=False, null=False)

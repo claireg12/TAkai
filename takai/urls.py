@@ -36,11 +36,13 @@ urlpatterns = [
     # ex: /takai/010314573/
     url(r'^(?P<sid>[0-9]{8})/$', views.profile, name='profile'),
 
+    # advanced search
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/search/$', views.adv_search, name='advsearch'),
     # ex: /takai/search/
     url(r'^search/$', views.search, name='search'),
 
     # ex: /takai/apply
-    url(r'^apply/$', views.TaApplication, name='apply'),
+     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/apply/$', views.TaApplication, name='apply'),
 
     url(r'^login/$', auth_views.login, name='login'),
 

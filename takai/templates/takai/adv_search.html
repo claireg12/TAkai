@@ -1,0 +1,50 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{% static 'css/semester.css' %}">
+
+<script src="jquery-3.3.1.min.js"></script>
+</head>
+
+<body>
+<!-- Logout Button -->
+<div class = "login-header" style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
+<!-- Takai Header -->
+<div class="page-header">
+    <h1><a href="/takai/">TAkai</a></li>
+</div>
+<div class="page-content">
+
+<h3> Search for TA's</h3>
+<form method="post">
+    {% csrf_token %}
+     available <select name= "day">
+        <option value="monday">Monday</option>
+        <option value="tuesday">Tuesday</option>
+        <option value="wednesday">Wednesday</option>
+        <option value="thursday">Thursday</option>
+        <option value="friday">Friday</option>
+    </select>
+     at  <select name = "time">
+        <option value="1">2:45 - 4:00</option>
+        <option value="2">1:15-2:30</option>
+    </select>
+    and <select name = "interest">
+      {% for interest in interests %}
+          <option value="interest">{{interest}}</option>
+      {% endfor %}
+      </select>
+      in mentoring for <select session = "session">
+      {% for session in sessions %}
+          <option value="session">{{session}}</option>
+      {% endfor %}
+      </select>
+    <input type="submit" value="Search">
+    </form>
+</div>
+</body>
+</html>
