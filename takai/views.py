@@ -30,8 +30,8 @@ def isProfessor(user):
 
 def getUserId(request):
     if isProfessor(request.user):
-        # we're getting the student/professor object based on the email, but since it's not 
-        # required to be unique, you could have two users with same email, which would throw 
+        # we're getting the student/professor object based on the email, but since it's not
+        # required to be unique, you could have two users with same email, which would throw
         # an error
         user_id = Professors.objects.get(email=request.user.email).fid
     else:
@@ -90,7 +90,7 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            # Authenticate user and login 
+            # Authenticate user and login
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
@@ -184,10 +184,11 @@ class DeleteTa(DeleteView):
 def TaApplication(request, year, semester): #or class (CreateView)
     #model = Classes
     #template_name_suffix = '_apply' #is it being used?=
-    num_classes = Session.objects.count() # filter by semester
-    classes = Session.objects.all() # filter by semester
+    num_classes = Session.objects.filter(semester=semester, year=year).count() # filter by semester
+    classes = Session.objects.filter(semester=semester, year=year) # filter by semester
     ApplicationFormSet = modelformset_factory(Application, fields=('student', 'semester', 'year', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability'))
     ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'), extra=num_classes)
+    AvailabilityFormSet = modelformset_factory(Availability, fields=('student', 'availabilitycode'))
     if request.method == 'POST':
         formset1 = ApplicationFormSet(#initial=[{'student':getUserId(request)}],
         request.POST, request.FILES,
@@ -198,11 +199,17 @@ def TaApplication(request, year, semester): #or class (CreateView)
         request.POST, request.FILES,
         queryset=Classinterest.objects.all(), # change to none? not sure
         )
+        formset3 = AvailabilityFormSet(
+        request.POST, request.FILES,
+        queryset=Availability.objects.all(), # change to none? not sure
+        )
         # formset1.student = getUserId(request)
         if formset1.is_valid():
             formset1.save()
         if formset2.is_valid():
             formset2.save()
+        if formset3.is_valid():
+            formset3.save()
         #return HttpResponseRedirect(reverse('semester', args = (year,semester)))
         #return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
     else:
@@ -212,7 +219,8 @@ def TaApplication(request, year, semester): #or class (CreateView)
         #formset1 = ApplicationFormSet(queryset=Application.objects.none())
         formset1 = ApplicationFormSet(initial=[{'student':getUserId(request), 'semester':"fall"}], queryset=Application.objects.none())
         formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
-    return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
+        formset3 = AvailabilityFormSet(queryset=Availability.objects.none())
+    return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2, 'formset3': formset3})
     # how to redirect to the semester page??
 
 # Profile page
@@ -292,5 +300,3 @@ def prof(request, year, semester, cid):
         assignment2.save()
 
     return session(request, year, semester, cid)
-
-
