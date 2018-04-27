@@ -32,8 +32,8 @@ def isProfessor(user):
 
 def getUserId(request):
     if isProfessor(request.user):
-        # we're getting the student/professor object based on the email, but since it's not 
-        # required to be unique, you could have two users with same email, which would throw 
+        # we're getting the student/professor object based on the email, but since it's not
+        # required to be unique, you could have two users with same email, which would throw
         # an error
         user_id = Professors.objects.get(email=request.user.email).fid
     else:
@@ -92,7 +92,7 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            # Authenticate user and login 
+            # Authenticate user and login
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
@@ -220,7 +220,9 @@ def TaApplication(request, year, semester): #or class (CreateView)
     all_classes = Session.objects.filter(semester=semester, year=year)
     num_classes = Session.objects.count() # filter by semester
     classes = Session.objects.all() # filter by semester
+
     ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'), extra=num_classes)
+    AvailabilityFormSet = modelformset_factory(Availability, fields=('student', 'availabilitycode'))
     if request.method == 'POST':
         appForm = ApplicationForm(request.POST)
         if appForm.is_valid():
@@ -232,16 +234,33 @@ def TaApplication(request, year, semester): #or class (CreateView)
         request.POST, request.FILES,
         queryset=Classinterest.objects.all(), # change to none? not sure
         )
+
         if formset2.is_valid():
             formset2.save()
+        formset3 = AvailabilityFormSet(
+        request.POST, request.FILES,
+        queryset=Availability.objects.all(), # change to none? not sure
+        )
+        # formset1.student = getUserId(request)
+        # if formset1.is_valid():
+        #     formset1.save()
+        if formset2.is_valid():
+            formset2.save()
+        if formset3.is_valid():
+            formset3.save()
+        #return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+        #return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
+        context = {'year': year, 'semester':semester,'name':request.user.first_name}
+        return render(request, 'takai/semester.html', context)
     else:
         initial2 = []
         for sesh in classes:
             initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
         formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
-        context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2}
-    return render(request, 'takai/apply.html', context)
+        formset3 = AvailabilityFormSet(queryset=Availability.objects.none())
+        context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': formset3}
+        return render(request, 'takai/apply.html', context)
     # how to redirect to the semester page??
 
 # Profile page
@@ -259,12 +278,16 @@ def profile(request, sid):
 # Search page
 @login_required
 def adv_search(request, year, semester):
-    context = {'year': year, 'semester':semester, 'user_id' : getUserId(request), 'name':request.user.first_name}
+    sessions = Session.objects.filter(semester=semester, year=year)
+    interests = Interestcode.objects.all()
+    context = {'year': year, 'semester':semester, 'sessions': sessions, 'interests':interests, 'user_id' : getUserId(request), 'name':request.user.first_name}
     try:
         time = request.POST.get('time', False)
         day = request.POST.get('day', False)
+        session = request.POST.get('session', False)
+        interest = request.POST.get('interest', False)
         # change  to application once table is added
-        results = Application.objects.filter(Q(title__icontains=time) | Q(intro__icontains=day) | Q(content__icontains=your_search_query))
+        #results = Application.objects.filter(Q(title__icontains=time) | Q(intro__icontains=day) | Q(content__icontains=your_search_query))
 
     except:
         raise Http404("Invalid Search")
@@ -333,5 +356,3 @@ def prof(request, year, semester, cid):
         assignment2.save()
 
     return session(request, year, semester, cid)
-
-
