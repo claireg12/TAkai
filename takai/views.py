@@ -12,7 +12,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+<<<<<<< HEAD
 from django.db.models import Q
+=======
+from django.contrib.auth.forms import UserCreationForm
+from .forms import SignUpForm
+
+>>>>>>> 1bd3618e1d6f86e4ebccf29b4a59451d8db47937
 
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta#,Application, Classinterest, Interestcode
 from .forms import *
@@ -20,11 +26,17 @@ from django.forms import ModelForm, modelformset_factory
 
 import pdb
 
+current_semester = "Spring"
+current_year = "2018"
+
 def isProfessor(user):
     return user.groups.filter(name='Professors').exists()
 
 def getUserId(request):
     if isProfessor(request.user):
+        # we're getting the student/professor object based on the email, but since it's not 
+        # required to be unique, you could have two users with same email, which would throw 
+        # an error
         user_id = Professors.objects.get(email=request.user.email).fid
     else:
         user_id = Students.objects.get(email=request.user.email).sid
@@ -77,9 +89,30 @@ def session(request, year, semester, cid):
     else:
         return render(request, 'takai/session.html', context)
 
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # Authenticate user and login 
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            # Add to Students table
+            grad_year = form.cleaned_data.get('graduation_year')
+            id_num = form.cleaned_data.get('id_number')
+            full_name = user.first_name + ' ' + user.last_name
+            student = Students.objects.create(sid = id_num, name=full_name, gradyear=grad_year, email=user.email)
+            student.save()
+            # Redirect to homepage for current semester
+            return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))
+    else:
+        form = SignUpForm()
+    return render(request, 'takai/signup.html', {'form': form})
+
 # TODO: why doesn't this permission work?
 # @user_passes_test(isProfessor)
-
 class UpdateSession(UpdateView):
     model = Session
     template_name_suffix = '_edit_prof'
@@ -152,29 +185,37 @@ class DeleteTa(DeleteView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
-def TaApplication(request): #or class (CreateView)
+def TaApplication(request, year, semester): #or class (CreateView)
     #model = Classes
-    #template_name_suffix = '_apply' #is it being used?
-    ApplicationFormSet = modelformset_factory(Application, fields=('student', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability'))
-    ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'))
+    #template_name_suffix = '_apply' #is it being used?=
+    num_classes = Session.objects.count() # filter by semester
+    classes = Session.objects.all() # filter by semester
+    ApplicationFormSet = modelformset_factory(Application, fields=('student', 'semester', 'year', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability'))
+    ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'), extra=num_classes)
     if request.method == 'POST':
-        formset1 = ApplicationFormSet(
+        formset1 = ApplicationFormSet(#initial=[{'student':getUserId(request)}],
         request.POST, request.FILES,
+        initial=[{'student':getUserId(request)}],
         queryset=Application.objects.all(), # change to none? not sure
         )
         formset2 = ClassinterestFormSet(
         request.POST, request.FILES,
         queryset=Classinterest.objects.all(), # change to none? not sure
         )
+        # formset1.student = getUserId(request)
         if formset1.is_valid():
             formset1.save()
         if formset2.is_valid():
             formset2.save()
+        #return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+        #return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
     else:
-        formset1 = ApplicationFormSet(queryset=Application.objects.none())
-        formset2 = ClassinterestFormSet(queryset=Classinterest.objects.none())
-
-
+        initial2 = []
+        for sesh in classes:
+            initial2.append({'sesh': sesh})
+        #formset1 = ApplicationFormSet(queryset=Application.objects.none())
+        formset1 = ApplicationFormSet(initial=[{'student':getUserId(request), 'semester':"fall"}], queryset=Application.objects.none())
+        formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
     return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
     # how to redirect to the semester page??
 
@@ -267,3 +308,5 @@ def prof(request, year, semester, cid):
         assignment2.save()
 
     return session(request, year, semester, cid)
+
+
