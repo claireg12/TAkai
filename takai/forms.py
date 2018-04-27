@@ -31,7 +31,8 @@ class UpdateProfessorInfo(forms.ModelForm):
 class UpdateSessionInfo(forms.ModelForm):
     class Meta:
         model = Session
-        fields = ['theclass', 'semester', 'year','classroom','times']
+        fields = ['theclass','semester','year','classroom','times']
+        exclude = ('theclass',)
         labels = {
             'theclass': ('Class'),
         }

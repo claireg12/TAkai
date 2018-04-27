@@ -39,9 +39,20 @@
     <li>Mentor Sessions:
         <ul>
         {% for mentorsesh in mentorsessions %}
+            <div class = "edit-pages" id="edit_ms" style="display:none"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
+            <script type="text/javascript">
+                if (window.document.readyState = "complete"){
+                    var host_email = "{{mentorsesh.ta.student.email}}"
+                    var USER_email = "{{user.email}}"
+                    var ms_link = document.getElementById("edit_ms");
+                    if (host_email == USER_email) {
+                        ms_link.style.visibility = 'visible';
+                        ms_link.style.display = 'inline';
+                        ms_link.style.cssFloat='right';
+                    }
+                }
+            </script>
             <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} </li>
-            <div class = "edit-pages" style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
-            <!-- TODO: Why is the name not showing up??? -->
         {% endfor %}
         </ul>
     </li>
