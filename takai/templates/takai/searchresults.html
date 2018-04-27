@@ -1,0 +1,35 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{% static 'css/session.css' %}">
+
+<script src="jquery-3.3.1.min.js"></script>
+   <!-- doesn't work -->
+</head>
+<!-- <link rel="stylesheet" type="text/css" href="session.css"> -->
+<body>
+<div class = "login-header" style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
+
+<div class="page-header">
+    <h1><a href="/takai/">TAkai</a> </li>
+</div>
+
+<div class="page-content">
+
+<h2>Search Results</h2>
+
+<ul>
+{% for result in results %}
+  {% for name in result %}
+    <li><a href="/takai/{{result.sid}}">{{name}}</li> <!-- doesn't redirect to TA page right now -->
+  {% endfor %}
+{% endfor %}
+</ul>
+
+</div>
+</body>
+</html>

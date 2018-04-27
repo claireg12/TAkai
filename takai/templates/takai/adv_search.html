@@ -20,10 +20,14 @@
 <div class="page-content">
 
 <h3> Search for TA's</h3>
-<form method="post">
+<form id="searchform" method="post"> <!--action="/takai/{{year}}{{semester}}/search/"-->
     {% csrf_token %}
-     available <select name= "day">
-        <option value="monday">Monday</option>
+     Available <select name= "availability">
+       <option value="anyavail">any time</option>
+       {% for availability in availabilities %}
+          <option value={{availability.code}}>{{availability}}</option>
+       {% endfor %}
+        <!-- <option value="monday">Monday</option>
         <option value="tuesday">Tuesday</option>
         <option value="wednesday">Wednesday</option>
         <option value="thursday">Thursday</option>
@@ -31,16 +35,17 @@
     </select>
      at  <select name = "time">
         <option value="1">2:45 - 4:00</option>
-        <option value="2">1:15-2:30</option>
+        <option value="2">1:15-2:30</option> -->
     </select>
     and <select name = "interest">
+      <option value="anyinterest">having any interest</option>
       {% for interest in interests %}
-          <option value="interest">{{interest}}</option>
+          <option value={{interest.code}}>{{interest}}</option>
       {% endfor %}
       </select>
-      in mentoring for <select session = "session">
+      in mentoring for <select name = "session">
       {% for session in sessions %}
-          <option value="session">{{session}}</option>
+          <option value={{session.id}}>{{session}}</option>
       {% endfor %}
       </select>
     <input type="submit" value="Search">
