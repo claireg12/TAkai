@@ -183,38 +183,65 @@ class DeleteTa(DeleteView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
+# class CreateApplication(CreateView):
+#     model = TaApplication
+#     template_name = 'apply'
+#     form_class = ApplicationForm
+#     second_form_class = ClassInterestForm
+    
+#     def get_success_url(self):
+#         session_id = self.kwargs['pk']
+#         some_session = Session.objects.get(pk=session_id)
+#         return reverse_lazy('semester', args = (some_session.year,some_session.semester))
+
+#     def post(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         # Save the changes to the professor table
+#         # Changes to the session table are automatically saved
+#         if 'email' in request.POST:
+#             class_interest_form = self.second_form_class(request.POST)
+#             if class_interest_form.is_valid():
+#                 class_interest = class_interest_form.cleaned_data
+#                 new_class_interest = Classinterest(**class_interest)
+#                 new_class_interest.student = getUserId(request)
+#                 new_class_interest.
+
+#                 teaches = Teach.objects.get(session=self.kwargs['pk'])
+#                 class_professor = Professors.objects.get(fid = teaches.professor.fid)
+#                 some_professor.fid = class_professor.fid
+#                 some_professor.save()
+#                 return super(CreateApplication, self).post(request, *args, **kwargs)
+#             else:
+#                 return super(CreateApplication, self).post(request, *args, **kwargs)
+#         else:
+#             return super(CreateApplication, self).post(request, *args, **kwargs)
+
 def TaApplication(request, year, semester): #or class (CreateView)
-    #model = Classes
-    #template_name_suffix = '_apply' #is it being used?=
+    all_classes = Session.objects.filter(semester=semester, year=year)
     num_classes = Session.objects.count() # filter by semester
     classes = Session.objects.all() # filter by semester
-    ApplicationFormSet = modelformset_factory(Application, fields=('student', 'semester', 'year', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability'))
     ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'), extra=num_classes)
     if request.method == 'POST':
-        formset1 = ApplicationFormSet(#initial=[{'student':getUserId(request)}],
-        request.POST, request.FILES,
-        initial=[{'student':getUserId(request)}],
-        queryset=Application.objects.all(), # change to none? not sure
-        )
+        appForm = ApplicationForm(request.POST)
+        if appForm.is_valid():
+            application = appForm.cleaned_data
+            application['student_id'] = getUserId(request)
+            new_application = Application.objects.create(**application)
+            new_application.save()
         formset2 = ClassinterestFormSet(
         request.POST, request.FILES,
         queryset=Classinterest.objects.all(), # change to none? not sure
         )
-        # formset1.student = getUserId(request)
-        if formset1.is_valid():
-            formset1.save()
         if formset2.is_valid():
             formset2.save()
-        #return HttpResponseRedirect(reverse('semester', args = (year,semester)))
-        #return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
     else:
         initial2 = []
         for sesh in classes:
             initial2.append({'sesh': sesh})
-        #formset1 = ApplicationFormSet(queryset=Application.objects.none())
-        formset1 = ApplicationFormSet(initial=[{'student':getUserId(request), 'semester':"fall"}], queryset=Application.objects.none())
+        appForm = ApplicationForm()
         formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
-    return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
+        context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2}
+    return render(request, 'takai/apply.html', context)
     # how to redirect to the semester page??
 
 # Profile page
