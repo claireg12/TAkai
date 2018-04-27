@@ -12,6 +12,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.db.models import Q
+
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
 
@@ -237,6 +239,18 @@ def profile(request, sid):
 
 # Search page
 @login_required
+def adv_search(request, year, semester):
+    context = {'year': year, 'semester':semester, 'user_id' : getUserId(request), 'name':request.user.first_name}
+    try:
+        time = request.POST.get('time', False)
+        day = request.POST.get('day', False)
+        # change  to application once table is added
+        results = Application.objects.filter(Q(title__icontains=time) | Q(intro__icontains=day) | Q(content__icontains=your_search_query))
+
+    except:
+        raise Http404("Invalid Search")
+    return render(request, 'takai/adv_search.html', context)
+
 # TODO: this should redirect to session page (ie just stay on same page), instead of redirecting to semester page, which is default
 @user_passes_test(isProfessor)
 #@permission_required('professors.can_add_professors', raise_exception=True)
