@@ -47,4 +47,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     url(r'^logout/$', auth_views.logout, {'template_name': 'registration/logout.html'}, name='logout'),
+
+    url(r'^signup/$', views.signup, name='signup'),
 ]
