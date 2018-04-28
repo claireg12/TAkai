@@ -200,16 +200,22 @@ class UpdateMentorSession(UpdateView):
 def addMentorSession(request, year, semester,cid, session):
     if request.method == 'POST':
         form = AddMSInfo(request.POST)
-        # if form.is_valid():
-        #     form.save()
-        #     # Authenticate user and login
-        #     day = form.cleaned_data.get('day')
-        #     time = form.cleaned_data.get('time')
-        #     location = form.cleaned_data.get('location')
-        #     mentorsession = Mentorsessions.objects.create(session = session, time = time, day = day, location = location)
-        #     mentorsession.save()
-        #     # Redirect to homepage for current semester
-        #     return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))    
+        if form.is_valid():
+            session = Session.objects.get(pk = session)
+            # Authenticate user and login
+            day = form.cleaned_data.get('day')
+            time = form.cleaned_data.get('time')
+            location = form.cleaned_data.get('location')
+            mentorsession = Mentorsessions.objects.create(session = session, time = time, day = day, location = location)
+            mentorsession.save()
+
+            userEmail = request.user.email
+            student = Students.objects.get(email = userEmail)
+            ta = Ta.objects.get(student = student)
+            host = Host.objects.create(ta= ta, session = session, mentorsesh = mentorsession)
+            host.save()
+            # Redirect to homepage for current semester
+            return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))    
     else:
         form = AddMSInfo()
 
