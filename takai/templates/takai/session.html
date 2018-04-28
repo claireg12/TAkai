@@ -21,7 +21,6 @@
 <div class="page-content">
 <h2> {{ semester }} {{ year }} </h2>
 <h2>CS{{some_class.cid}}: {{ some_class.name }} </h2>
-
 <ul>
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
@@ -59,16 +58,22 @@
     <li>TAs:
         <ul>
         {% for ta in tas %}
+            <div class = "edit-pages" id="add_ms" style='display:none'> <a href="{% url 'session-mentor-add' year semester some_class.cid some_session.pk %}">Add a Mentor Session </a> </div>
+            <br />
             <div class = "edit-pages" id="edit_ta" style='display:none'> <a href="{% url 'ta-edit' year semester some_class.cid ta.ta.pk %}">Edit TA Information </a> </div>
             <script type="text/javascript">
                 if (window.document.readyState = "complete"){
                     var TA_email = "{{ta.ta.student.email}}"
                     var USER_email = "{{user.email}}"
                     var ta_link = document.getElementById("edit_ta");
+                    var add_ms = document.getElementById("add_ms");
                     if (TA_email == USER_email) {
                         ta_link.style.visibility = 'visible';
                         ta_link.style.display = 'inline';
                         ta_link.style.cssFloat='right';
+                        add_ms.style.visibility = 'visible';
+                        add_ms.style.display = 'inline';
+                        add_ms.style.cssFloat='right';
                     }
                 }
             </script>

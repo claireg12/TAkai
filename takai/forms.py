@@ -42,6 +42,11 @@ class UpdateMSInfo(forms.ModelForm):
         model = Mentorsessions
         fields = ['time', 'day','location']
 
+class AddMSInfo(forms.ModelForm):
+    class Meta:
+        model = Mentorsessions
+        fields = ['time', 'day','location']
+
 class UpdateTaInfo(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -71,3 +76,7 @@ class ClassInterestForm(ModelForm):
     class Meta:
         model = Classinterest
         fields = ['student', 'session', 'interestcode']
+        labels = {
+            'interestcode': ('Interest Level:'),
+            'session':('Class'),
+        }

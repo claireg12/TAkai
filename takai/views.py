@@ -13,6 +13,7 @@ from django.contrib.auth.models import Permission, User
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.db.models import Q
+from django.views.generic.edit import FormMixin
 
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
@@ -20,7 +21,7 @@ from .forms import SignUpForm
 
 from .models import Classes, Students, Enroll, Session, Mentor, Teach, Professors, Host,Ta#,Application, Classinterest, Interestcode
 from .forms import *
-from django.forms import ModelForm, modelformset_factory
+from django.forms import ModelForm, modelformset_factory, formset_factory
 
 import pdb
 
@@ -159,6 +160,60 @@ class UpdateMentorSession(UpdateView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
+# class AddMentorSession(CreateView,FormMixin):
+#     model = Mentorsessions
+#     template_name_suffix = '_add'
+#     form_class = AddMSInfo
+
+#     def get_success_url(self):
+#         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
+
+#     # def get_form_kwargs(self):
+#     #     kwargs = super(AddMentorSession).get_form_kwargs()
+#     #     session_id = kwargs['session']
+#     #     kwargs['session_id'].update({'session_id': session_id})
+#     #     return kwargs
+
+#     def post(self, request, *args, **kwargs):
+#         session_id = self.kwargs['session']
+#         session = Session.objects.get(pk = session_id)
+
+#         # Save the changes to the professor table
+#         # Changes to the session table are automatically saved
+#         ms_add_form = self.form_class(request.POST)
+#         if ms_add_form.is_valid():
+#             ms_add = ms_add_form.cleaned_data
+#         time = ms_add.get('time')
+#         day = ms_add.get('day')
+#         location = ms_add.get('location')
+#         mentorsession = Mentorsessions.objects.create(session = session, time = time, day = day, location = location)
+#         # request_new =         # if not request.POST._mutable:
+#         #     request.POST._mutable = Truerequest.copy()
+
+#         # request1.POST = request.POST.copy()
+#         # request.POST['session_id'] = session_id
+#         # pdb.set_trace()
+#         # return super(AddMentorSession, self).post(request, *args, **kwargs)
+#         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
+
+def addMentorSession(request, year, semester,cid, session):
+    if request.method == 'POST':
+        form = AddMSInfo(request.POST)
+        # if form.is_valid():
+        #     form.save()
+        #     # Authenticate user and login
+        #     day = form.cleaned_data.get('day')
+        #     time = form.cleaned_data.get('time')
+        #     location = form.cleaned_data.get('location')
+        #     mentorsession = Mentorsessions.objects.create(session = session, time = time, day = day, location = location)
+        #     mentorsession.save()
+        #     # Redirect to homepage for current semester
+        #     return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))    
+    else:
+        form = AddMSInfo()
+
+    return render(request, 'takai/mentorsessions_add.html', {'form': form})
+
 #not really working
 class UpdateTa(UpdateView):
     model = Ta
@@ -221,7 +276,9 @@ def TaApplication(request, year, semester): #or class (CreateView)
     num_classes = Session.objects.count() # filter by semester
     classes = Session.objects.all() # filter by semester
 
-    ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'), extra=num_classes)
+    # ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'), extra=num_classes)
+    ClassinterestFormSet = formset_factory(ClassInterestForm, extra=num_classes)
+
     AvailabilityFormSet = modelformset_factory(Availability, fields=('student', 'availabilitycode'))
     if request.method == 'POST':
         appForm = ApplicationForm(request.POST)
@@ -257,7 +314,8 @@ def TaApplication(request, year, semester): #or class (CreateView)
         for sesh in classes:
             initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
-        formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
+        formset2 = ClassinterestFormSet()
+        # formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
         formset3 = AvailabilityFormSet(queryset=Availability.objects.none())
         context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': formset3}
         return render(request, 'takai/apply.html', context)

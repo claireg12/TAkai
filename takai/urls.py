@@ -30,6 +30,9 @@ urlpatterns = [
     # ex: /takai/2018Spring/140/edit/mentor
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit/mentorsession/$', views.UpdateMentorSession.as_view(), name='session-mentor-edit'),
 
+     # ex: /takai/2018Spring/140/add/mentor
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<session>[0-9]+)/add/mentorsession/$', views.addMentorSession(), name='session-mentor-add'),
+
     # ex: /takai/2018Spring/140/(ta_id)/edit
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit-ta/$', views.UpdateTa.as_view(), name='ta-edit'),
 

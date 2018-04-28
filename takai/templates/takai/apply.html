@@ -40,20 +40,12 @@
         {% endfor %} -->
     <!-- {% endfor %} --> 
     {{ formset2.management_form }}
-    {% for form in formset2 %}
-      <ul>
-        <li>{{form.session.label_tag}} {{form.session}}</li>
-        <li>{{form.interestcode.label_tag}} {{form.interestcode}}
-      </ul>
+    {% for form in formset2%}
+        {{form.session.label_tag}} {{form.session}}
+        {{form.interestcode.label_tag}} {{form.interestcode}} <br/>
         <!-- {% for field in form %}
             {{ field.label_tag }} {{ field }}<br/>
         {% endfor %} -->
-    {% endfor %}
-    {{ formset3.management_form }}
-    {% for form in formset3 %}
-        {% for field in form %}
-            {{ field.label_tag }} {{ field }}<br/>
-        {% endfor %}
     {% endfor %}
     <input type="submit" value="Submit" />
     </form>

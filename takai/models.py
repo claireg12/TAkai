@@ -202,6 +202,7 @@ class Classinterest(models.Model):
         managed = True
         db_table = 'Classinterest'
 
+
 # CREATE TABLE InterestCode(code int, meaning char (100))
 # CREATE TABLE ClassInterest(student int, session , interestcode int)
 
