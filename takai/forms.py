@@ -15,7 +15,7 @@ class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=254)
-    id_number = forms.IntegerField(min_value=10000000, max_value=99999999, help_text='Please Enter your 8 digit student ID number.', 
+    id_number = forms.IntegerField(min_value=10000000, max_value=99999999, help_text='Please Enter your 8 digit student ID number.',
         error_messages={'min_value':'Please enter a valid ID number'})
     graduation_year = forms.IntegerField(min_value=2018)
 

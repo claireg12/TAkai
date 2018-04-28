@@ -19,18 +19,18 @@
 </div>
 <div class="page-content">
 <!-- Search Bar -->
-<form action="/takai/search/" method="get">
+<!-- <form action="/takai/search/" method="get">
     <input id="ta_search" type="text" name="name_field" value="Search for TA(s)">
    <input type="submit" value="Search">
-</form>
-<a href="/takai/{{year}}{{semester}}/search"> Advanced Search </a>
+</form> -->
+<a href="/takai/{{year}}{{semester}}/search"> Search for TAs </a>
 
 <!-- ie Spring 2018 Courses -->
 <h2>{{semester}} {{year}} Courses</h2>
 
 <h3>My Courses</h3>
 {% if my_classes %}
-    <ul> 
+    <ul>
     {% for classes in my_classes %}
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
             <form class = "form" method="get">
