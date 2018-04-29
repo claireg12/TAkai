@@ -215,7 +215,7 @@ def addMentorSession(request, year, semester,cid, session):
             host = Host.objects.create(ta= ta, session = session, mentorsesh = mentorsession)
             host.save()
             # Redirect to homepage for current semester
-            return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))    
+            return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))
     else:
         form = AddMSInfo()
 
@@ -344,7 +344,7 @@ def profile(request, sid):
     return render(request, 'takai/profile.html', {'some_ta': some_ta, 'name':request.user.first_name})
 
 # Search page
-@login_required
+@user_passes_test(isProfessor)
 def adv_search(request, year, semester):
     sessions = Session.objects.filter(semester=semester, year=year)
     interests = Interestcode.objects.all()
@@ -355,10 +355,6 @@ def adv_search(request, year, semester):
             session = request.POST.get('session', False)
             interest = request.POST.get('interest', False)
             availability = request.POST.get('availability', False)
-            #pdb.set_trace()
-            # change  to application once table is added
-            # <div style="float:right"> <a href="{% url 'session-faculty-edit' year semester some_class.cid some_session.pk %}">Edit Class</a> </div>
-            # results = Application.objects.filter(Q(title__icontains=time) | Q(intro__icontains=day) | Q(content__icontains=your_search_query))
             if availability == "anyavail":
                 results1 = Availability.objects.all().values_list('student', flat="True")
             else:
@@ -367,41 +363,20 @@ def adv_search(request, year, semester):
                 results2 = Classinterest.objects.all().values_list('student', flat="True")
             else:
                 results2 = Classinterest.objects.filter(session=session, interestcode=interest).values_list('student', flat="True")
-            # for result1 in results1:
-            #     result1 = result1.student
-            #results = results1 & results2
-            #results = Set.empty()
-            #pdb.set_trace()
-            #results = results1.intersection(results2)
             results = set(results1).intersection(set(results2))
             names = []
+            sids = []
+            students = []
             for result in results:
                 names.append(Students.objects.filter(sid=result).values_list('name')[0])
-            # names = []
-            # for result in results:
-            #     names.append(result.name)
-            pdb.set_trace()
-            #return render(request, 'takai/adv_search.html', context)
-            #blurb = 1
-            return searchresults(request, names)
-        #return render(request, 'takai/searchresults.html', {'results':results})
+                sids.append(Students.objects.filter(sid=result).values_list('sid')[0])
+                students.append(Students.objects.filter(sid=result))
+            allresults = zip(names, sids)
+            return render(request, 'takai/searchresults.html', {'name':request.user.first_name, 'results':students})
     except:
         raise Http404("Invalid Search")
-    #return searchresults(request, results)
 
     return render(request, 'takai/adv_search.html', context)
-
-
-def searchresults(request, results):
-    #question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'takai/searchresults.html', {'results': results})
-
-
-# TODO: this should redirect to session page (ie just stay on same page), instead of redirecting to semester page, which is default
-@user_passes_test(isProfessor)
-#@permission_required('professors.can_add_professors', raise_exception=True)
-def search(request):
-        return render(request, 'takai/search.html', {'name':request.user.first_name})
 
 
 # When a professor wants to teach a course
