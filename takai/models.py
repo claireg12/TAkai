@@ -149,7 +149,7 @@ class Application(models.Model):
     num_hours_week = models.FloatField()
 
     def __str__(self):
-        return str(self.student.name) + ' ' + str(self.school) + ' ' + str(self.major)
+        return str(self.semester) + ' ' + str(self.year) + ' ' + str(self.school) + ' ' + str(self.major) + ' ' + str(self.qualities) + ' ' + str(self.num_hours_week)
 
     class Meta:
         managed = True
@@ -171,7 +171,7 @@ class Availability(models.Model):
     availabilitycode = models.ForeignKey(Availabilitycode, models.DO_NOTHING, blank=False, null=False)
 
     def __str__(self):
-        return str(self.student.name) + ' ' + str(self.availabilitycode.meaning)
+        return str(self.availabilitycode.meaning)
 
     class Meta:
         managed = True
@@ -194,7 +194,7 @@ class Classinterest(models.Model):
     interestcode = models.ForeignKey(Interestcode, models.DO_NOTHING, blank=False, null=False)
 
     def __str__(self):
-        return str(self.student.name) + ' ' + str(self.session.theclass.cid) + ' ' + str(self.interestcode.meaning)
+        return str(self.session.theclass.cid) + ' ' + str(self.interestcode.meaning)
 
     class Meta:
         managed = True

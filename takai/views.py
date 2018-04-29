@@ -260,10 +260,12 @@ def TaApplication(request, year, semester): #or class (CreateView)
 def profile(request, sid):
     try:
         some_ta = Students.objects.get(pk=sid)
-        ta_apps = Application.objects.filter(pk=sid)
+        ta_apps = Application.objects.filter(student=sid)
+        ta_avails = Availability.objects.filter(student=sid)
+        ta_interests = Classinterest.objects.filter(student=sid)
     except Students.DoesNotExist:
         raise Http404("Student does not exist")
-    return render(request, 'takai/profile.html', {'some_ta': some_ta, 'apps': ta_apps, 'name':request.user.first_name})
+    return render(request, 'takai/profile.html', {'some_ta': some_ta, 'apps': ta_apps, 'avails': ta_avails, 'interests':ta_interests, 'name':request.user.first_name})
 
 # Search page
 @user_passes_test(isProfessor)

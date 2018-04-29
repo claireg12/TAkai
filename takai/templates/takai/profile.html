@@ -27,11 +27,36 @@
   <li>Email: <a href="mailto:{{ some_ta.email }}">{{ some_ta.email }}</a></li>
 </ul>
 
+All applications
 <ul>
 	{% for app in apps %}
-
+	<li> Application </li>
+		<ul>
+			<li> {{app.semester}} {{app.year}} </li>
+			<li> School: {{app.school}}
+			<li> Major: {{app.major}} </li>
+			<li> Qualities: {{app.qualities}} </li>
+			<li> Number of hours available per week: {{app.num_hours_week}} </li>
+		</ul>
 	{% endfor %}
 </ul>
+<ul>
+	<li> Availabilities: </li>
+	<ul>
+	{% for avail in avails %}
+		<li> {{avail}} </li>
+	{% endfor %}
+</ul>
+</ul>
+<ul>
+	<li> Interests: </li>
+	<ul>
+	{% for interest in interests %}
+		<li> {{interest}} </li>
+	{% endfor %}
+</ul>
+</ul>
+
 
 </div>
 </body>
