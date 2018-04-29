@@ -41,12 +41,9 @@ urlpatterns = [
 
     # advanced search
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/search/$', views.adv_search, name='advsearch'),
-    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/searchresults/$', views.searchresults, name='searchresults'),
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/searchresults/$', views.adv_search, name='searchresults'),
 
     # url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/searchresults/$', views.SearchView, name='searchresults'),
-
-    # ex: /takai/search/
-    url(r'^search/$', views.search, name='search'),
 
     # ex: /takai/apply
      url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/apply/$', views.TaApplication, name='apply'),

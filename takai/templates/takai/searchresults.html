@@ -23,11 +23,11 @@
 <h2>Search Results</h2>
 
 <ul>
-{% for result in results %}
-  {% for name in result %}
-    <li><a href="/takai/{{result.sid}}">{{name}}</li> <!-- doesn't redirect to TA page right now -->
-  {% endfor %}
-{% endfor %}
+  {% for student in results %}
+    {% for thing in student %}
+  <li><a href="/takai/{{thing.sid}}">{{thing.name}}</li> <!-- doesn't redirect to TA page right now -->
+    {% endfor %}
+   {% endfor %}
 </ul>
 
 </div>
