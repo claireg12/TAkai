@@ -215,7 +215,7 @@ def addMentorSession(request, year, semester,cid, session):
             host = Host.objects.create(ta= ta, session = session, mentorsesh = mentorsession)
             host.save()
             # Redirect to homepage for current semester
-            return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))    
+            return HttpResponseRedirect(reverse('session', args = (year,semester,cid)))    
     else:
         form = AddMSInfo()
 
@@ -248,48 +248,13 @@ class DeleteTa(DeleteView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
-# class CreateApplication(CreateView):
-#     model = TaApplication
-#     template_name = 'apply'
-#     form_class = ApplicationForm
-#     second_form_class = ClassInterestForm
-
-#     def get_success_url(self):
-#         session_id = self.kwargs['pk']
-#         some_session = Session.objects.get(pk=session_id)
-#         return reverse_lazy('semester', args = (some_session.year,some_session.semester))
-
-#     def post(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         # Save the changes to the professor table
-#         # Changes to the session table are automatically saved
-#         if 'email' in request.POST:
-#             class_interest_form = self.second_form_class(request.POST)
-#             if class_interest_form.is_valid():
-#                 class_interest = class_interest_form.cleaned_data
-#                 new_class_interest = Classinterest(**class_interest)
-#                 new_class_interest.student = getUserId(request)
-#                 new_class_interest.
-
-#                 teaches = Teach.objects.get(session=self.kwargs['pk'])
-#                 class_professor = Professors.objects.get(fid = teaches.professor.fid)
-#                 some_professor.fid = class_professor.fid
-#                 some_professor.save()
-#                 return super(CreateApplication, self).post(request, *args, **kwargs)
-#             else:
-#                 return super(CreateApplication, self).post(request, *args, **kwargs)
-#         else:
-#             return super(CreateApplication, self).post(request, *args, **kwargs)
-
 def TaApplication(request, year, semester): #or class (CreateView)
     all_classes = Session.objects.filter(semester=semester, year=year)
     num_classes = Session.objects.count() # filter by semester
     classes = Session.objects.all() # filter by semester
 
-    # ClassinterestFormSet = modelformset_factory(Classinterest, fields=('student', 'session', 'interestcode'), extra=num_classes)
     ClassinterestFormSet = formset_factory(ClassInterestForm, extra=num_classes)
 
-    AvailabilityFormSet = modelformset_factory(Availability, fields=('student', 'availabilitycode'))
     if request.method == 'POST':
         appForm = ApplicationForm(request.POST)
         if appForm.is_valid():
@@ -298,36 +263,29 @@ def TaApplication(request, year, semester): #or class (CreateView)
             new_application = Application.objects.create(**application)
             new_application.save()
         formset2 = ClassinterestFormSet(
-        request.POST, request.FILES,
-        queryset=Classinterest.objects.all(), # change to none? not sure
-        )
+        request.POST, request.FILES,)
+
+        # save the availabilty information
+        student = Students.objects.get(sid = getUserId(request))
+        availability_list = request.POST.getlist('availabilitycode')
+        for availability in availability_list:
+            availabilitycode = Availabilitycode.objects.get(code=availability)
+            new_availability = Availability.objects.create(availabilitycode = availabilitycode, student = student)
 
         if formset2.is_valid():
             formset2.save()
-        formset3 = AvailabilityFormSet(
-        request.POST, request.FILES,
-        queryset=Availability.objects.all(), # change to none? not sure
-        )
-        # formset1.student = getUserId(request)
-        # if formset1.is_valid():
-        #     formset1.save()
-        if formset2.is_valid():
-            formset2.save()
-        if formset3.is_valid():
-            formset3.save()
-        #return HttpResponseRedirect(reverse('semester', args = (year,semester)))
-        #return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
-        context = {'year': year, 'semester':semester,'name':request.user.first_name}
-        return render(request, 'takai/semester.html', context)
+
+        return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+
     else:
         initial2 = []
         for sesh in classes:
             initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
-        formset2 = ClassinterestFormSet()
-        # formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
-        formset3 = AvailabilityFormSet(queryset=Availability.objects.none())
-        context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': formset3}
+        classInterestForm = ClassinterestFormSet()
+        # classInterestForm = ClassinterestFormSet(initial=[{'sesh': sesh} for sesh in classes])
+        availabilityForm = AvailabilityForm()
+        context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': classInterestForm,'formset3': availabilityForm}
         return render(request, 'takai/apply.html', context)
     # how to redirect to the semester page??
 

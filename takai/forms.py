@@ -32,7 +32,7 @@ class UpdateSessionInfo(forms.ModelForm):
     class Meta:
         model = Session
         fields = ['theclass','semester','year','classroom','times']
-        exclude = ('theclass',)
+        exclude = ('theclass','semester','year')
         labels = {
             'theclass': ('Class'),
         }
@@ -53,11 +53,12 @@ class UpdateTaInfo(forms.ModelForm):
         super(UpdateTaInfo, self).__init__(*args, **kwargs)
 
         # add custom error messages
-        self.fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
+        fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
 
     class Meta:
         model = Ta
-        fields = ['student', 'bio']
+        fields = ['student','bio']
+        exclude = ['student']
         error_messages = {
             'unique': 'You do not have permissions to edit other TAs or TA already exists',
         }
@@ -71,6 +72,21 @@ class ApplicationForm(ModelForm):
     class Meta:
         model = Application
         fields = ['semester', 'year', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability']
+
+class AvailabilityForm(ModelForm):
+    AVAILABILITY_CHOICES  = (
+        ('1','W 1:15-2:30pm'),
+        ('2','W 2:45-4:00pm' ),
+        ('3','Th 1:15-2:30pm' ),
+        ('4','Th 2:45-4:00pm' ),
+        ('5','F 1:15-2:30pm' ),
+        ('6','F 2:45-4:00pm'))
+
+    availabilitycode= forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices = AVAILABILITY_CHOICES, label= '')
+    class Meta:
+        model = Availability
+        fields = ['availabilitycode','student']
+        exclude = ['student']
 
 class ClassInterestForm(ModelForm):
     class Meta:

@@ -2,17 +2,18 @@ body {
     background-color: white;
 }
 
-h1 a {
+h1 {
     color: white;
-    margin-left: 20px;
+    padding: 20px;
+    font-size: 50px;
 }
 
 .page-header {
     background-color: lightsteelblue;
     margin-top: 0;
-    padding: 20px 20px 20px 40px;
+    padding: 20px 20px 20px 20px;
     font-family: 'Do Hyeon', sans-serif;
-    font-size: 40px;
+    font-size: 50px;
     color: white;
 
 }
