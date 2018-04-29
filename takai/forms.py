@@ -71,7 +71,7 @@ class ClassesForm(ModelForm):
 class ApplicationForm(ModelForm):
     class Meta:
         model = Application
-        fields = ['semester', 'year', 'school', 'major', 'qualities', 'num_hours_week', 'lab_availability']
+        fields = ['semester', 'year', 'school', 'major', 'qualities', 'num_hours_week']
 
 class AvailabilityForm(ModelForm):
     AVAILABILITY_CHOICES  = (
