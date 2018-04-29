@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<session>[0-9]+)/add/mentorsession/$', views.addMentorSession, name='session-mentor-add'),
 
     # ex: /takai/2018Spring/140/(ta_id)/edit
-    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit-ta/$', views.UpdateTa.as_view(), name='ta-edit'),
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/(?P<pk>\d+)/edit-ta/$', views.UpdateTa, name='ta-edit'),
 
     # ex: /takai/010314573/
     url(r'^(?P<sid>[0-9]{8})/$', views.profile, name='profile'),
