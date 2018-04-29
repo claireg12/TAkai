@@ -97,6 +97,21 @@ class BaseArticleFormSet(BaseFormSet):
                 pdb.set_trace()
             sessions.append(sessions)
 
+class AvailabilityForm(ModelForm):
+    AVAILABILITY_CHOICES  = (
+        ('1','W 1:15-2:30pm'),
+        ('2','W 2:45-4:00pm' ),
+        ('3','Th 1:15-2:30pm' ),
+        ('4','Th 2:45-4:00pm' ),
+        ('5','F 1:15-2:30pm' ),
+        ('6','F 2:45-4:00pm'))
+
+    availabilitycode= forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices = AVAILABILITY_CHOICES, label= '')
+    class Meta:
+        model = Availability
+        fields = ['availabilitycode','student']
+        exclude = ['student']
+
 class ClassInterestForm(ModelForm):
 
     # def __init__(self, *args, student, **kwargs):

@@ -147,8 +147,6 @@ class Application(models.Model):
     major = models.CharField(max_length=100, blank=False, null=False)
     qualities = models.CharField(max_length=1500, blank=False, null=False)
     num_hours_week = models.FloatField()
-    lab_availability = models.CharField(max_length=100, blank=False, null=False)
-    # class_interest = models.ForeignKey(Classinterest, on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):
         return str(self.student.name) + ' ' + str(self.school) + ' ' + str(self.major)

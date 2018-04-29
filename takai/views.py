@@ -162,42 +162,6 @@ class UpdateMentorSession(UpdateView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
-# class AddMentorSession(CreateView,FormMixin):
-#     model = Mentorsessions
-#     template_name_suffix = '_add'
-#     form_class = AddMSInfo
-
-#     def get_success_url(self):
-#         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
-
-#     # def get_form_kwargs(self):
-#     #     kwargs = super(AddMentorSession).get_form_kwargs()
-#     #     session_id = kwargs['session']
-#     #     kwargs['session_id'].update({'session_id': session_id})
-#     #     return kwargs
-
-#     def post(self, request, *args, **kwargs):
-#         session_id = self.kwargs['session']
-#         session = Session.objects.get(pk = session_id)
-
-#         # Save the changes to the professor table
-#         # Changes to the session table are automatically saved
-#         ms_add_form = self.form_class(request.POST)
-#         if ms_add_form.is_valid():
-#             ms_add = ms_add_form.cleaned_data
-#         time = ms_add.get('time')
-#         day = ms_add.get('day')
-#         location = ms_add.get('location')
-#         mentorsession = Mentorsessions.objects.create(session = session, time = time, day = day, location = location)
-#         # request_new =         # if not request.POST._mutable:
-#         #     request.POST._mutable = Truerequest.copy()
-
-#         # request1.POST = request.POST.copy()
-#         # request.POST['session_id'] = session_id
-#         # pdb.set_trace()
-#         # return super(AddMentorSession, self).post(request, *args, **kwargs)
-#         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
-
 def addMentorSession(request, year, semester,cid, session):
     if request.method == 'POST':
         form = AddMSInfo(request.POST)
@@ -216,7 +180,7 @@ def addMentorSession(request, year, semester,cid, session):
             host = Host.objects.create(ta= ta, session = session, mentorsesh = mentorsession)
             host.save()
             # Redirect to homepage for current semester
-            return HttpResponseRedirect(reverse('semester', args = (current_year,current_semester)))    
+            return HttpResponseRedirect(reverse('session', args = (year,semester,cid)))    
     else:
         form = AddMSInfo()
 
@@ -243,39 +207,6 @@ class DeleteTa(DeleteView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
-# class CreateApplication(CreateView):
-#     model = TaApplication
-#     template_name = 'apply'
-#     form_class = ApplicationForm
-#     second_form_class = ClassInterestForm
-
-#     def get_success_url(self):
-#         session_id = self.kwargs['pk']
-#         some_session = Session.objects.get(pk=session_id)
-#         return reverse_lazy('semester', args = (some_session.year,some_session.semester))
-
-#     def post(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         # Save the changes to the professor table
-#         # Changes to the session table are automatically saved
-#         if 'email' in request.POST:
-#             class_interest_form = self.second_form_class(request.POST)
-#             if class_interest_form.is_valid():
-#                 class_interest = class_interest_form.cleaned_data
-#                 new_class_interest = Classinterest(**class_interest)
-#                 new_class_interest.student = getUserId(request)
-#                 new_class_interest.
-
-#                 teaches = Teach.objects.get(session=self.kwargs['pk'])
-#                 class_professor = Professors.objects.get(fid = teaches.professor.fid)
-#                 some_professor.fid = class_professor.fid
-#                 some_professor.save()
-#                 return super(CreateApplication, self).post(request, *args, **kwargs)
-#             else:
-#                 return super(CreateApplication, self).post(request, *args, **kwargs)
-#         else:
-#             return super(CreateApplication, self).post(request, *args, **kwargs)
-
 def TaApplication(request, year, semester): #or class (CreateView)
     all_classes = Session.objects.filter(semester=semester, year=year)
     num_classes = Session.objects.count() # filter by semester
@@ -287,8 +218,6 @@ def TaApplication(request, year, semester): #or class (CreateView)
     ClassinterestFormSet = formset_factory(ClassInterestForm, extra=num_classes, formset=BaseArticleFormSet)
     # ClassinterestFormSet = ClassinterestFormSet2(form_kwargs={'student': student})
 
-
-    AvailabilityFormSet = modelformset_factory(Availability, fields=('student', 'availabilitycode'))
     if request.method == 'POST':
         appForm = ApplicationForm(request.POST)
         if appForm.is_valid():
@@ -306,18 +235,12 @@ def TaApplication(request, year, semester): #or class (CreateView)
         # queryset=Classinterest.objects.all(), # change to none? not sure
         )
 
-        # pdb.set_trace()
-        # if formset2.is_valid():
-        #     formset2.save()
-        formset3 = AvailabilityFormSet(
-        request.POST, request.FILES,
-        # queryset=Availability.objects.all(), # change to none? not sure
-        )
-        # formset1.student = getUserId(request)
-        # if formset1.is_valid():
-        #     formset1.save()
 
-        student = Students.objects.get(email=request.user.email)
+        student = Students.objects.get(sid = getUserId(request))
+        availability_list = request.POST.getlist('availabilitycode')
+        for availability in availability_list:
+            availabilitycode = Availabilitycode.objects.get(code=availability)
+            new_availability = Availability.objects.create(availabilitycode = availabilitycode, student = student)
 
         if formset2.is_valid():
             # interest_forms = formset2.save(commit=False)
@@ -326,21 +249,18 @@ def TaApplication(request, year, semester): #or class (CreateView)
                 new_application = Classinterest.objects.create(**clean_form)
                 new_application.save()
 
-        if formset3.is_valid():
-            formset3.save()
-        #return HttpResponseRedirect(reverse('semester', args = (year,semester)))
-        #return render(request, 'takai/apply.html', {'name':request.user.first_name, 'formset1': formset1, 'formset2': formset2})
-        context = {'year': year, 'semester':semester,'name':request.user.first_name}
-        return render(request, 'takai/semester.html', context)
+
+        return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+
     else:
         initial2 = []
         for sesh in classes:
             initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
-        formset2 = ClassinterestFormSet()
-        # formset2 = ClassinterestFormSet(initial=initial2, queryset=Classinterest.objects.none())
-        formset3 = AvailabilityFormSet(queryset=Availability.objects.none())
-        context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': formset3}
+        classInterestForm = ClassinterestFormSet()
+        # classInterestForm = ClassinterestFormSet(initial=[{'sesh': sesh} for sesh in classes])
+        availabilityForm = AvailabilityForm()
+        context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': classInterestForm,'formset3': availabilityForm}
         return render(request, 'takai/apply.html', context)
     # how to redirect to the semester page??
 
@@ -357,7 +277,7 @@ def profile(request, sid):
     return render(request, 'takai/profile.html', {'some_ta': some_ta, 'name':request.user.first_name})
 
 # Search page
-@login_required
+@user_passes_test(isProfessor)
 def adv_search(request, year, semester):
     sessions = Session.objects.filter(semester=semester, year=year)
     interests = Interestcode.objects.all()
@@ -368,10 +288,6 @@ def adv_search(request, year, semester):
             session = request.POST.get('session', False)
             interest = request.POST.get('interest', False)
             availability = request.POST.get('availability', False)
-            #pdb.set_trace()
-            # change  to application once table is added
-            # <div style="float:right"> <a href="{% url 'session-faculty-edit' year semester some_class.cid some_session.pk %}">Edit Class</a> </div>
-            # results = Application.objects.filter(Q(title__icontains=time) | Q(intro__icontains=day) | Q(content__icontains=your_search_query))
             if availability == "anyavail":
                 results1 = Availability.objects.all().values_list('student', flat="True")
             else:
@@ -380,16 +296,13 @@ def adv_search(request, year, semester):
                 results2 = Classinterest.objects.all().values_list('student', flat="True")
             else:
                 results2 = Classinterest.objects.filter(session=session, interestcode=interest).values_list('student', flat="True")
-            # for result1 in results1:
-            #     result1 = result1.student
-            #results = results1 & results2
-            #results = Set.empty()
-            #pdb.set_trace()
-            #results = results1.intersection(results2)
             results = set(results1).intersection(set(results2))
             names = []
+            sids = []
+            students = []
             for result in results:
                 names.append(Students.objects.filter(sid=result).values_list('name')[0])
+<<<<<<< HEAD
             # names = []
             # for result in results:
             #     names.append(result.name)
@@ -398,23 +311,16 @@ def adv_search(request, year, semester):
             #blurb = 1
             return searchresults(request, names)
         #return render(request, 'takai/searchresults.html', {'results':results})
+=======
+                sids.append(Students.objects.filter(sid=result).values_list('sid')[0])
+                students.append(Students.objects.filter(sid=result))
+            allresults = zip(names, sids)
+            return render(request, 'takai/searchresults.html', {'name':request.user.first_name, 'results':students})
+>>>>>>> fc3d4fac768dfc6e254745f3aefd10388e99f5a6
     except:
         raise Http404("Invalid Search")
-    #return searchresults(request, results)
 
     return render(request, 'takai/adv_search.html', context)
-
-
-def searchresults(request, results):
-    #question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'takai/searchresults.html', {'results': results})
-
-
-# TODO: this should redirect to session page (ie just stay on same page), instead of redirecting to semester page, which is default
-@user_passes_test(isProfessor)
-#@permission_required('professors.can_add_professors', raise_exception=True)
-def search(request):
-        return render(request, 'takai/search.html', {'name':request.user.first_name})
 
 
 # When a professor wants to teach a course
