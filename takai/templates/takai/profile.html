@@ -22,10 +22,15 @@
 
 <h2>{{some_ta.name}}</h2>
 
-
 <ul>
 	<li>Graduation Year: {{ some_ta.gradyear }}</li>
-    <li>Email: <a href="malito:{{ some_ta.email }}">{{ some_ta.email }}</a></li>
+  <li>Email: <a href="mailto:{{ some_ta.email }}">{{ some_ta.email }}</a></li>
+</ul>
+
+<ul>
+	{% for app in apps %}
+
+	{% endfor %}
 </ul>
 
 </div>

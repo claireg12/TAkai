@@ -179,7 +179,7 @@ def addMentorSession(request, year, semester,cid, session):
             host = Host.objects.create(ta= ta, session = session, mentorsesh = mentorsession)
             host.save()
             # Redirect to homepage for current semester
-            return HttpResponseRedirect(reverse('session', args = (year,semester,cid)))    
+            return HttpResponseRedirect(reverse('session', args = (year,semester,cid)))
     else:
         form = AddMSInfo()
 
@@ -257,13 +257,13 @@ def TaApplication(request, year, semester): #or class (CreateView)
 @login_required
 # TODO: this should redirect to session page (ie just stay on same page), instead of redirecting to semester page, which is default
 @user_passes_test(isProfessor)
-# @permission_required('professors.can_add_professors', raise_exception=True)
 def profile(request, sid):
     try:
         some_ta = Students.objects.get(pk=sid)
+        ta_apps = Application.objects.filter(pk=sid)
     except Students.DoesNotExist:
         raise Http404("Student does not exist")
-    return render(request, 'takai/profile.html', {'some_ta': some_ta, 'name':request.user.first_name})
+    return render(request, 'takai/profile.html', {'some_ta': some_ta, 'apps': ta_apps, 'name':request.user.first_name})
 
 # Search page
 @user_passes_test(isProfessor)
