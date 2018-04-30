@@ -56,7 +56,7 @@
     <li>TAs:
         <ul>
         {% for ta in tas %}
-            <div class = "edit-pages" id="edit_ta" style='float:right'> <a href="{% url 'ta-edit' year semester some_class.cid ta.ta.pk %}">Edit TA Information </a> </div>
+            <div class = "edit-pages" id="edit_ta" style='display:none'> <a href="{% url 'ta-edit' year semester some_class.cid ta.ta.pk %}">Edit TA Information </a> </div>
             <script type="text/javascript">
                 if (window.document.readyState = "complete"){
                     var TA_email = "{{ta.ta.student.email}}"

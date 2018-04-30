@@ -198,23 +198,6 @@ def UpdateTa(request, year, semester,cid, pk):
         form = UpdateTaInfo()
     return render(request, 'takai/ta_edit.html', {'form': form})
 
-# class UpdateTa(UpdateView):
-#     model = Ta
-#     template_name_suffix = '_edit'
-#     form_class = UpdateTaInfo #initial={'student': 10314767}
-
-#     def get_context_data(self, **kwargs):
-#         context = super(UpdateTa, self).get_context_data(**kwargs)
-#         #pdb.set_trace()
-
-#         if isTA(self.kwargs['pk']):
-#             return context
-#         else:
-#             raise Http404("You need TA permissions to edit this")
-
-#     def get_success_url(self):
-#         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
-
 class DeleteTa(DeleteView):
     model = Mentor
 
