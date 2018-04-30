@@ -15,7 +15,7 @@
   </div>
 
 <div class="page-content">
-  <h2> TA Application for {{semester}} {{year}} </h2>
+  <h2> TA Application for {{next_semester}} {{next_year}} </h2>
   <h5> <font color="red"> All fields are required </font></h5>
 <p>
     <form method="post" action="">
@@ -27,8 +27,8 @@
      Please indicate your interest level for TAing each class. <br>
     {{ formset2.management_form }}
     {% for form in formset2%}
-        {{form.session.label_tag}} {{form.session}}
-        {{form.interestcode.label_tag}} {{form.interestcode}} <br>
+          {{form.session.label_tag}} {{form.session}}
+          {{form.interestcode.label_tag}} {{form.interestcode}} <br>
     {% endfor %}
 
     {% if formset2.errors %}
