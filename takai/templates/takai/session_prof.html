@@ -8,6 +8,11 @@
 <link rel="stylesheet" href="{% static 'css/session.css' %}">
 
 <script src="jquery-3.3.1.min.js"></script>
+
+<style>
+    button { display: inline; }
+</style>
+
 </head>
 
 <body>
@@ -19,7 +24,6 @@
 
 
 <div class="page-content">
-<h2> {{ semester }} {{ year }} </h2>
 <h2>CS{{some_class.cid}}: {{ some_class.name }} </h2>
 
 <div class="edit-pages" style="float:right"> <a href="{% url 'session-faculty-edit' year semester some_class.cid some_session.pk %}">Edit Class</a> </div>
@@ -49,14 +53,15 @@
     <li>TAs:
         <ul>
         {% for ta in tas %}
-            <li><a href="/takai/{{ta.ta.student.sid}}"> {{ta.ta.student.name}}</a>: {{ta.ta.bio}} </li>
-            <form action ="{% url 'ta-delete' year semester some_class.cid ta.pk %}" method = "post" style = "display: inline;">
+            <li><a href="/takai/{{ta.ta.student.sid}}"> {{ta.ta.student.name}}</a>: {{ta.ta.bio}} <form action ="{% url 'ta-delete' year semester some_class.cid ta.pk %}" method = "post" style = "display: inline;">
                 {% csrf_token %}
                 <input type = "hidden" name = "ta_id" value = "{{ta.pk}}"/>
                 <button type = "submit" class = "btn btn-default btn-sm">
                     <span class = "glyphicon glyphicon-trash"></span>
                 </button>
             </form>
+        </li>
+            
         {% endfor %}
         </ul>
     </li>
