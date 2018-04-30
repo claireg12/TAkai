@@ -53,7 +53,7 @@ class UpdateTaInfo(forms.ModelForm):
         super(UpdateTaInfo, self).__init__(*args, **kwargs)
 
         # add custom error messages
-        fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
+        #fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
 
     class Meta:
         model = Ta

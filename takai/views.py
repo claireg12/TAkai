@@ -64,8 +64,7 @@ def semester(request, year, semester):
         my_classes = Session.objects.filter(enroll__student__sid=getUserId(request), semester=semester, year=year)
         other_classes = set(all_classes).difference(set(my_classes))
         mentor_classes = Session.objects.filter(mentor__ta__student__sid=getUserId(request), semester=semester, year=year)
-        # other_classes = set(o_classes).difference(set(mentor_classes))
-
+        my_classes = set(my_classes).difference(set(mentor_classes))
         context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes, 'name':request.user.first_name, 'mentor_classes':mentor_classes}
         return render(request, 'takai/semester.html', context)
 
@@ -185,7 +184,6 @@ def addMentorSession(request, year, semester,cid, session):
 
     return render(request, 'takai/mentorsessions_add.html', {'form': form})
 
-#not really working
 class UpdateTa(UpdateView):
     model = Ta
     template_name_suffix = '_edit'
@@ -199,9 +197,6 @@ class UpdateTa(UpdateView):
             return context
         else:
             raise Http404("You need TA permissions to edit this")
-
-    # def get_initial(self):
-    #     return { 'student': self.kwargs['pk']}
 
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
@@ -246,7 +241,6 @@ def TaApplication(request, year, semester): #or class (CreateView)
             formset2.save()
 
         return HttpResponseRedirect(reverse('semester', args = (year,semester)))
-
     else:
         initial2 = []
         for sesh in classes:
@@ -257,11 +251,9 @@ def TaApplication(request, year, semester): #or class (CreateView)
         availabilityForm = AvailabilityForm()
         context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': classInterestForm,'formset3': availabilityForm}
         return render(request, 'takai/apply.html', context)
-    # how to redirect to the semester page??
 
 # Profile page
 @login_required
-# TODO: this should redirect to session page (ie just stay on same page), instead of redirecting to semester page, which is default
 @user_passes_test(isProfessor)
 def profile(request, sid):
     try:
@@ -294,20 +286,13 @@ def adv_search(request, year, semester):
             else:
                 results2 = Classinterest.objects.filter(session=session, interestcode=interest).values_list('student', flat="True")
             results = set(results1).intersection(set(results2))
-            names = []
-            sids = []
             students = []
             for result in results:
-                names.append(Students.objects.filter(sid=result).values_list('name')[0])
-                sids.append(Students.objects.filter(sid=result).values_list('sid')[0])
                 students.append(Students.objects.filter(sid=result))
-            allresults = zip(names, sids)
             return render(request, 'takai/searchresults.html', {'name':request.user.first_name, 'results':students})
     except:
         raise Http404("Invalid Search")
-
     return render(request, 'takai/adv_search.html', context)
-
 
 # When a professor wants to teach a course
 @login_required
@@ -332,13 +317,6 @@ def unteach(request, year, semester, cid):
 def enroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
     session = Session.objects.get(theclass=cid)
-
-    # if (Enroll.objects.filter(student=student, session=session)):
-    #     all_classes = Session.objects.filter(semester=semester, year=year)
-    #     my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
-    #     context = {'all_classes': all_classes,'year': year, 'semester':semester, 'user_id' : student.sid}
-    #     return render(request, 'takai/semester.html', context)
-    # else:
     enrollment = Enroll.objects.create(student = student, session=session,)
     enrollment.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -348,13 +326,6 @@ def enroll(request, year, semester, cid):
 def unenroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
     session = Session.objects.get(theclass=cid)
-
-    # if (Enroll.objects.filter(student=student, session=session)):
-    #     all_classes = Session.objects.filter(semester=semester, year=year)
-    #     my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
-    #     context = {'all_classes': all_classes,'year': year, 'semester':semester, 'user_id' : student.sid}
-    #     return render(request, 'takai/semester.html', context)
-    # else:
     unenrollment = Enroll.objects.filter(student = student, session=session,)
     unenrollment.delete()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -378,11 +349,3 @@ def prof(request, year, semester, cid):
         assignment2.save()
 
     return session(request, year, semester, cid)
-
-@login_required
-class SearchView(generic.ListView):
-    #template_name = 'polls/index.html'
-    context_object_name = 'ta_searched_list'
-
-    def get_queryset(self):
-        return Ta.objects.all()

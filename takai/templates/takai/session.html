@@ -7,10 +7,7 @@
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="{% static 'css/session.css' %}">
 
-<script src="jquery-3.3.1.min.js"></script>
-   <!-- doesn't work -->
 </head>
-<!-- <link rel="stylesheet" type="text/css" href="session.css"> -->
 <body>
 <div class = "login-header" style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
 
@@ -36,9 +33,10 @@
         {% endfor %}
     </li>
     <li>Mentor Sessions:
+      <div class = "edit-pages" id="add_ms" style='display:none'> <a href="{% url 'session-mentor-add' year semester some_class.cid some_session.pk %}">Add a Mentor Session </a> </div>
         <ul>
         {% for mentorsesh in mentorsessions %}
-            <div class = "edit-pages" id="edit_ms" style="display:none"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
+        <div class = "edit-pages" id="edit_ms" style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
             <script type="text/javascript">
                 if (window.document.readyState = "complete"){
                     var host_email = "{{mentorsesh.ta.student.email}}"
@@ -58,9 +56,7 @@
     <li>TAs:
         <ul>
         {% for ta in tas %}
-            <div class = "edit-pages" id="add_ms" style='display:none'> <a href="{% url 'session-mentor-add' year semester some_class.cid some_session.pk %}">Add a Mentor Session </a> </div>
-            <br />
-            <div class = "edit-pages" id="edit_ta" style='display:none'> <a href="{% url 'ta-edit' year semester some_class.cid ta.ta.pk %}">Edit TA Information </a> </div>
+            <div class = "edit-pages" id="edit_ta" style='float:right'> <a href="{% url 'ta-edit' year semester some_class.cid ta.ta.pk %}">Edit TA Information </a> </div>
             <script type="text/javascript">
                 if (window.document.readyState = "complete"){
                     var TA_email = "{{ta.ta.student.email}}"

@@ -7,27 +7,6 @@
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="{% static 'css/semester.css' %}">
 
-<script src="jquery-3.3.1.min.js"></script>
-
-<!-- <style>
-.button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 15px 25px;
-    text-align: right;
-    font-size: 16px;
-    cursor: pointer;
-}
-.button:hover {
-    background: green;
-}
-.form{
-    display: inline;
-}
-
-</style>
- -->
 </head>
 
 <body>
@@ -58,6 +37,8 @@
             </form>
           </li>
     {% endfor %}
+{% elif mentor_classes%}
+<ul>
     {% for classes in mentor_classes %}
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
             <form class = "form" method="get">
@@ -66,6 +47,7 @@
             </form>
         </li>
     {% endfor %}
+  </ul>
     </ul>
 {% else %}
     <ul><li>Not currently enrolled in any courses</li></ul>
