@@ -12,6 +12,8 @@ import pdb
 class SignUpForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
+        self.fields['password1'].help_text='Your password cannot be too similar to your other personal information, and cannot be a commonly used password. Your password must contain at least 8 characters and cannot be entirely numeric.' 
+
         # self.fields['first'] = forms.IntegerField(max_value=max_values['first'])
         # add custom error messages
         # self.fields['graduation_year'].error_messages['unique'] = 'Please enter a valid graduation year.'

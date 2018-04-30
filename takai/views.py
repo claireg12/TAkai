@@ -229,35 +229,41 @@ def TaApplication(request, year, semester): #or class (CreateView)
             else:
                 application['semester'] = "Fall"
                 application['year'] = year
-            new_application = Application.objects.create(**application)
-            new_application.save()
+            # new_application = Application.objects.create(**application)
+            # new_application.save()
 
                 # ClassinterestFormSet = ClassinterestFormSet2(initial=[{'student':student,}])
 
-        formset2 = ClassinterestFormSet(
-        request.POST, request.FILES, initial=[{'student':student,}]
-        # queryset=Classinterest.objects.all(), # change to none? not sure
-        )
+            formset2 = ClassinterestFormSet(
+            request.POST, request.FILES, initial=[{'student':student,}]
+            # queryset=Classinterest.objects.all(), # change to none? not sure
+            )
 
-        student = Students.objects.get(sid = getUserId(request))
-        availability_list = request.POST.getlist('availabilitycode')
-        for availability in availability_list:
-            availabilitycode = Availabilitycode.objects.get(code=availability)
-            new_availability = Availability.objects.create(availabilitycode = availabilitycode, student = student)
+            student = Students.objects.get(sid = getUserId(request))
+            availability_list = request.POST.getlist('availabilitycode')
 
-        if formset2.is_valid():
-            # interest_forms = formset2.save(commit=False)
-            for form in formset2:
-                clean_form = form.cleaned_data
-                clean_form['student_id'] = getUserId(request)
-                new_application = Classinterest.objects.create(**clean_form)
+
+            if formset2.is_valid():
+                # interest_forms = formset2.save(commit=False)
+                new_application = Application.objects.create(**application)
                 new_application.save()
-        else:
-            availabilityForm = AvailabilityForm()
-            context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
-            return render(request, 'takai/apply.html', context)
 
-        return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+                for availability in availability_list:
+                    availabilitycode = Availabilitycode.objects.get(code=availability)
+                    new_availability = Availability.objects.create(availabilitycode = availabilitycode, student = student)
+                    new_availability.save()
+
+                for form in formset2:
+                    clean_form = form.cleaned_data
+                    clean_form['student_id'] = getUserId(request)
+                    new_application = Classinterest.objects.create(**clean_form)
+                    new_application.save()
+            else:
+                availabilityForm = AvailabilityForm()
+                context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
+                return render(request, 'takai/apply.html', context)
+
+            return HttpResponseRedirect(reverse('semester', args = (year,semester)))
     else:
         initial2 = []
         for sesh in classes:
@@ -280,7 +286,7 @@ def profile(request, sid):
         ta_interests = Classinterest.objects.filter(student=sid)
     except Students.DoesNotExist:
         raise Http404("Student does not exist")
-    return render(request, 'takai/profile.html', {'some_ta': some_ta, 'apps': ta_apps, 'avails': ta_avails, 'interests':ta_interests, 'name':request.user.first_name})
+    return render(request, 'takai/profile.html', {'some_ta': some_ta, 'apps': ta_apps, 'avails': ta_avails, 'interests':ta_interests, 'name':request.user.first_name, 'semester':current_semester, 'year':current_year})
 
 # Search page
 @user_passes_test(isProfessor)
@@ -306,7 +312,7 @@ def adv_search(request, year, semester):
             students = []
             for result in results:
                 students.append(Students.objects.filter(sid=result))
-            return render(request, 'takai/searchresults.html', {'name':request.user.first_name, 'results':students})
+            return render(request, 'takai/searchresults.html', {'name':request.user.first_name, 'results':students, 'semester':current_semester, 'year':current_year})
     except:
         raise Http404("Invalid Search")
     return render(request, 'takai/adv_search.html', context)

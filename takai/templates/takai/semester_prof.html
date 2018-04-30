@@ -5,7 +5,7 @@
 <link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-<link rel="stylesheet" href="{% static 'css/semester.css' %}">
+<link rel="stylesheet" href="{% static 'css/session.css' %}">
 
 </head>
 
@@ -14,10 +14,10 @@
 <div class = "login-header" style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
 <!-- Takai Header -->
 <div class="page-header">
-    <h1><a href="/takai/">TAkai</a></li>
+    <h1><a href="/takai/">TAkai</a> {{ semester }} {{ year }} </li>
 </div>
 <div class="page-content">
-<a href="/takai/{{year}}{{semester}}/search"> Search for TAs </a>
+<h4><a href="/takai/{{year}}{{semester}}/search"> Search for TAs </a></h4>
 
 <!-- ie Spring 2018 Courses -->
 <h2>{{semester}} {{year}} Courses</h2>
