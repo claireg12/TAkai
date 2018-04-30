@@ -30,6 +30,11 @@
         {{form.session.label_tag}} {{form.session}}
         {{form.interestcode.label_tag}} {{form.interestcode}} <br>
     {% endfor %}
+
+    {% if formset2.errors %}
+      <li><strong><font color="red">Please make sure you select your level of interest for every class listed exactly once</font></strong></li>
+    {% endif %}
+
     <br>
     Please select all labs times for which you are available
      {{ formset3}}

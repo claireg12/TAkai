@@ -185,22 +185,19 @@ def addMentorSession(request, year, semester,cid, session):
 
     return render(request, 'takai/mentorsessions_add.html', {'form': form})
 
-class UpdateTa(UpdateView):
-    model = Ta
-    template_name_suffix = '_edit'
-    form_class = UpdateTaInfo
-
-    def get_context_data(self, **kwargs):
-        context = super(UpdateTa, self).get_context_data(**kwargs)
-        #pdb.set_trace()
-
-        if isTA(self.kwargs['pk']):
-            return context
-        else:
-            raise Http404("You need TA permissions to edit this")
-
-    def get_success_url(self):
-        return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
+def UpdateTa(request, year, semester,cid, pk):
+    if request.method == 'POST':
+        form = UpdateTaInfo(request.POST)
+        if form.is_valid():
+            student = Students.objects.get(email=request.user.email)
+            bio = form.cleaned_data.get('bio')
+            ta = Ta.objects.get(student=student)
+            ta.bio = bio
+            ta.save()
+            return HttpResponseRedirect(reverse('session', args = (current_year,current_semester,cid)))
+    else:
+        form = UpdateTaInfo()
+    return render(request, 'takai/ta_edit.html', {'form': form})
 
 class DeleteTa(DeleteView):
     model = Mentor
@@ -213,12 +210,18 @@ def TaApplication(request, year, semester): #or class (CreateView)
     num_classes = Session.objects.count() # filter by semester
     classes = Session.objects.all() # filter by semester
 
-    ClassinterestFormSet = formset_factory(ClassInterestForm, extra=num_classes)
+    student = Students.objects.get(email=request.user.email)
+
+    # ClassinterestFormSet = modelformset_factory(Classinterest, form=ClassInterestForm, extra=num_classes)
+    ClassinterestFormSet = formset_factory(ClassInterestForm, extra=num_classes, formset=BaseArticleFormSet)
+    # ClassinterestFormSet = ClassinterestFormSet2(form_kwargs={'student': student})
 
     if request.method == 'POST':
         appForm = ApplicationForm(request.POST)
         if appForm.is_valid():
             application = appForm.cleaned_data
+            # student = Students.objects.get(email=request.user.email)
+            # application['student'] = student
             application['student_id'] = getUserId(request)
             if semester == "Fall":
                 application['semester'] = "Spring"
@@ -228,10 +231,14 @@ def TaApplication(request, year, semester): #or class (CreateView)
                 application['year'] = year
             new_application = Application.objects.create(**application)
             new_application.save()
-        formset2 = ClassinterestFormSet(
-        request.POST, request.FILES,)
 
-        # save the availabilty information
+                # ClassinterestFormSet = ClassinterestFormSet2(initial=[{'student':student,}])
+
+        formset2 = ClassinterestFormSet(
+        request.POST, request.FILES, initial=[{'student':student,}]
+        # queryset=Classinterest.objects.all(), # change to none? not sure
+        )
+
         student = Students.objects.get(sid = getUserId(request))
         availability_list = request.POST.getlist('availabilitycode')
         for availability in availability_list:
@@ -239,7 +246,16 @@ def TaApplication(request, year, semester): #or class (CreateView)
             new_availability = Availability.objects.create(availabilitycode = availabilitycode, student = student)
 
         if formset2.is_valid():
-            formset2.save()
+            # interest_forms = formset2.save(commit=False)
+            for form in formset2:
+                clean_form = form.cleaned_data
+                clean_form['student_id'] = getUserId(request)
+                new_application = Classinterest.objects.create(**clean_form)
+                new_application.save()
+        else:
+            availabilityForm = AvailabilityForm()
+            context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
+            return render(request, 'takai/apply.html', context)
 
         return HttpResponseRedirect(reverse('semester', args = (year,semester)))
     else:

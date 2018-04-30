@@ -1,9 +1,13 @@
 from django import forms
 from django.forms import ModelForm
+from django.forms import BaseFormSet
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from takai.models import *
+from django.forms import BaseModelFormSet
+import pdb
+
 
 class SignUpForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
@@ -32,10 +36,7 @@ class UpdateSessionInfo(forms.ModelForm):
     class Meta:
         model = Session
         fields = ['theclass','semester','year','classroom','times']
-        exclude = ('theclass','semester','year')
-        labels = {
-            'theclass': ('Class'),
-        }
+        exclude = ('theclass', 'semester', 'year')
 
 class UpdateMSInfo(forms.ModelForm):
     class Meta:
@@ -49,19 +50,23 @@ class AddMSInfo(forms.ModelForm):
 
 class UpdateTaInfo(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(UpdateTaInfo, self).__init__(*args, **kwargs)
+    # def __init__(self, *args, **kwargs):
+    #     super(UpdateTaInfo, self).__init__(*args, **kwargs)
 
-        # add custom error messages
-        #fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
+    #     # add custom error messages
+    #     self.fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
+
 
     class Meta:
         model = Ta
-        fields = ['student','bio']
-        exclude = ['student']
-        error_messages = {
-            'unique': 'You do not have permissions to edit other TAs or TA already exists',
-        }
+        fields = ['student', 'bio']
+        exclude = ('student',)
+
+class RequiredFormSet(BaseFormSet):
+    def __init__(self, *args, **kwargs):
+        super(RequiredFormSet, self).__init__(*args, **kwargs)
+        for form in self.forms:
+            form.empty_permitted = False
 
 class ClassesForm(ModelForm):
     class Meta:
@@ -76,6 +81,32 @@ class ApplicationForm(ModelForm):
             'qualities': ('What qualities do you have that make you a good student mentor?'),
             'num_hours_week': ('Maximum number of hours available per week:'),
         }
+
+class BaseArticleFormSet(BaseFormSet):
+    def clean(self):
+        """Checks that no two articles have the same title."""
+        # pdb.set_trace()
+        # super().clean()
+        # self.fields['student'] = self.initial
+        # pdb.set_trace()
+
+        if any(self.errors):
+            # Don't bother validating the formset unless each form is valid on its own
+            return
+        sessions = []
+        # pdb.set_trace()
+        for form in self.forms:
+            # form.empty_permitted = False
+            if not form.cleaned_data:
+                form.add_error('interestcode', 'Did not complete form')
+            else:
+                session = form.cleaned_data['session']
+                # pdb.set_trace()
+                if session in sessions:
+                    form.add_error('interestcode', 'Chose same class twice')
+                    # raise forms.ValidationError("Please select your level of interest for every class listed exactly once")
+                sessions.append(session)
+
 
 class AvailabilityForm(ModelForm):
     AVAILABILITY_CHOICES  = (
@@ -93,10 +124,22 @@ class AvailabilityForm(ModelForm):
         exclude = ['student']
 
 class ClassInterestForm(ModelForm):
+
+    # def __init__(self, *args, student, **kwargs):
+    #     self.student = student
+    #     super().__init__(*args, **kwargs)
+
+    def __init__(self, *args, **kwargs):
+        super(ClassInterestForm, self).__init__(*args, **kwargs)
+        # pdb.set_trace()
+        # self.fields['student'] = self.initial
+
     class Meta:
         model = Classinterest
-        fields = ['student', 'session', 'interestcode']
+        fields = ['session', 'interestcode']
+
         labels = {
             'interestcode': ('Interest Level:'),
             'session':('Class'),
         }
+    
