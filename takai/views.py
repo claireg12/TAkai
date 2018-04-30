@@ -71,7 +71,7 @@ def semester(request, year, semester):
 def session(request, year, semester, cid):
     try:
         some_class = Classes.objects.get(pk=cid)
-        some_session = Session.objects.get(theclass=cid)
+        some_session = Session.objects.get(theclass=cid, semester=semester, year=year)
         tas = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         profs = Teach.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
@@ -243,7 +243,7 @@ def TaApplication(request, year, semester):
                     new_application.save()
             else:
                 availabilityForm = AvailabilityForm()
-                context = {'all_classes':all_classes, 'year': next_year, 'semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
+                context = {'all_classes':all_classes, 'year':year, 'semester':semester, 'next_year': next_year, 'next_semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
                 return render(request, 'takai/apply.html', context)
 
             return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -253,6 +253,8 @@ def TaApplication(request, year, semester):
             initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
         classInterestForm = ClassinterestFormSet()
+        for form in classInterestForm:
+            form.fields["session"].queryset = all_classes
         availabilityForm = AvailabilityForm()
         context = {'all_classes':all_classes, 'year': next_year, 'semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': classInterestForm,'formset3': availabilityForm}
         return render(request, 'takai/apply.html', context)
@@ -273,7 +275,7 @@ def profile(request, sid):
 # Search page
 @user_passes_test(isProfessor)
 def adv_search(request, year, semester):
-    sessions = Session.objects.filter(semester=semester, year=year)
+    sessions = Session.objects.all()
     interests = Interestcode.objects.all()
     availabilities = Availabilitycode.objects.all()
     context = {'year': year, 'semester':semester, 'sessions': sessions, 'interests':interests, 'availabilities': availabilities, 'user_id' : getUserId(request), 'name':request.user.first_name}
@@ -339,7 +341,7 @@ def unenroll(request, year, semester, cid):
 # If the student is not a TA yet, adds it as a TA and as a mentor for that class
 @login_required
 def prof(request, year, semester, cid):
-    session1 = Session.objects.get(theclass=cid)
+    session1 = Session.objects.get(theclass=cid, semester=semester, year=year)
     try:
         student = Students.objects.get(name=request.POST.get('student_name_field', False))
         returned_student_name = student.name
