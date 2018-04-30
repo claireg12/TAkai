@@ -64,6 +64,7 @@ def semester(request, year, semester):
         my_classes = Session.objects.filter(enroll__student__sid=getUserId(request), semester=semester, year=year)
         other_classes = set(all_classes).difference(set(my_classes))
         mentor_classes = Session.objects.filter(mentor__ta__student__sid=getUserId(request), semester=semester, year=year)
+        other_classes = set(other_classes).difference(set(mentor_classes))
         my_classes = set(my_classes).difference(set(mentor_classes))
         context = {'my_classes':my_classes, 'year': year, 'semester':semester, 'user_id' : getUserId(request), 'other_classes':other_classes, 'name':request.user.first_name, 'mentor_classes':mentor_classes}
         return render(request, 'takai/semester.html', context)
@@ -187,7 +188,7 @@ def addMentorSession(request, year, semester,cid, session):
 class UpdateTa(UpdateView):
     model = Ta
     template_name_suffix = '_edit'
-    form_class = UpdateTaInfo #initial={'student': 10314767}
+    form_class = UpdateTaInfo
 
     def get_context_data(self, **kwargs):
         context = super(UpdateTa, self).get_context_data(**kwargs)

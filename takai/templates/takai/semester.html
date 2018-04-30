@@ -23,7 +23,7 @@
 <h4><a href="/takai/{{year}}{{semester}}/apply/"> Apply to be a TA! </a></h4>
 
 <h3>My Courses</h3>
-{% if my_classes %}
+{% if my_classes or mentor_classes%}
     <ul>
     {% for classes in my_classes %}
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
@@ -37,8 +37,6 @@
             </form>
           </li>
     {% endfor %}
-{% elif mentor_classes%}
-<ul>
     {% for classes in mentor_classes %}
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
             <form class = "form" method="get">
@@ -47,7 +45,6 @@
             </form>
         </li>
     {% endfor %}
-  </ul>
     </ul>
 {% else %}
     <ul><li>Not currently enrolled in any courses</li></ul>
