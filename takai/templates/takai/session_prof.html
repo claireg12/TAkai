@@ -46,6 +46,7 @@
         {% for mentorsesh in mentorsessions %}
             <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} </li>
              <div class = "edit-pages" style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
+        {% endfor %}
         </ul>
     </li>
     <li>TAs:
@@ -59,11 +60,9 @@
                 </button>
             </form>
         </li>
-            
         {% endfor %}
         </ul>
     </li>
-{% endfor %}
 </ul>
 
 <form action="{% url 'session-prof' year semester some_class.cid %}" method="post">

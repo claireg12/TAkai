@@ -339,7 +339,7 @@ def unenroll(request, year, semester, cid):
 # If the student is not a TA yet, adds it as a TA and as a mentor for that class
 @login_required
 def prof(request, year, semester, cid):
-    session1 = Session.objects.get(theclass=cid)
+    session1 = Session.objects.get(theclass=cid, semester=semester, year=year)
     try:
         student = Students.objects.get(name=request.POST.get('student_name_field', False))
         returned_student_name = student.name
