@@ -71,7 +71,7 @@ def semester(request, year, semester):
 def session(request, year, semester, cid):
     try:
         some_class = Classes.objects.get(pk=cid)
-        some_session = Session.objects.get(theclass=cid)
+        some_session = Session.objects.get(theclass=cid, semester=semester, year=year)
         tas = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         profs = Teach.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
@@ -275,7 +275,7 @@ def profile(request, sid):
 # Search page
 @user_passes_test(isProfessor)
 def adv_search(request, year, semester):
-    sessions = Session.objects.filter(semester=semester, year=year)
+    sessions = Session.objects.all()
     interests = Interestcode.objects.all()
     availabilities = Availabilitycode.objects.all()
     context = {'year': year, 'semester':semester, 'sessions': sessions, 'interests':interests, 'availabilities': availabilities, 'user_id' : getUserId(request), 'name':request.user.first_name}

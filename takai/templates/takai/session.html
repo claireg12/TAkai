@@ -16,12 +16,10 @@
 </div>
 
 <div class="page-content">
-<h2> {{ semester }} {{ year }} </h2>
 <h2>CS{{some_class.cid}}: {{ some_class.name }} </h2>
 <ul>
-{% for session in some_class.session_set.all %}
-    <li>Lectures: {{ session.times }}</li>
-    <li>Classroom: {{ session.classroom }}</li>
+    <li>Lectures: {{ some_session.times }}</li>
+    <li>Classroom: {{ some_session.classroom }}</li>
     <li>Professor(s):
         {% for prof in profs %}
             {{prof.professor.name}} <br/>
@@ -36,21 +34,10 @@
       <div class = "edit-pages" id="add_ms" style='display:none'> <a href="{% url 'session-mentor-add' year semester some_class.cid some_session.pk %}">Add a Mentor Session </a> </div>
         <ul>
         {% for mentorsesh in mentorsessions %}
-        <div class = "edit-pages" id="edit_ms" style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
-            <script type="text/javascript">
-                if (window.document.readyState = "complete"){
-                    var host_email = "{{mentorsesh.ta.student.email}}"
-                    var USER_email = "{{user.email}}"
-                    var ms_link = document.getElementById("edit_ms");
-                    if (host_email == USER_email) {
-                        ms_link.style.visibility = 'visible';
-                        ms_link.style.display = 'inline';
-                        ms_link.style.cssFloat='right';
-                    }
-                }
-            </script>
+            {% if mentorsesh.ta.student.email == user.email %}
+                <div class = "edit-pages" id="edit_ms" style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
+            {% endif %}
             <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} </li>
-        {% endfor %}
         </ul>
     </li>
     <li>TAs:

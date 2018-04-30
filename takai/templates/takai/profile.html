@@ -25,13 +25,13 @@
 	<li>Graduation Year: {{ some_ta.gradyear }}</li>
   <li>Email: <a href="mailto:{{ some_ta.email }}">{{ some_ta.email }}</a></li>
 </ul>
-
-All applications
+<br>
+<h4><u>All Applications</u></h4>
 <ul>
 	{% for app in apps %}
-	<li> Application </li>
+	<li> Basic Info: </li>
 		<ul>
-			<li> {{app.semester}} {{app.year}} </li>
+			<li> Applying for: {{app.semester}} {{app.year}} </li>
 			<li> School: {{app.school}}
 			<li> Major: {{app.major}} </li>
 			<li> Qualities: {{app.qualities}} </li>
@@ -40,7 +40,7 @@ All applications
 	{% endfor %}
 </ul>
 <ul>
-	<li> Availabilities: </li>
+	<li> Availability: </li>
 	<ul>
 	{% for avail in avails %}
 		<li> {{avail}} </li>
@@ -48,7 +48,7 @@ All applications
 </ul>
 </ul>
 <ul>
-	<li> Interests: </li>
+	<li> Course Preferences: </li>
 	<ul>
 	{% for interest in interests %}
 		<li> {{interest}} </li>
