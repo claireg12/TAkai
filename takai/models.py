@@ -201,10 +201,6 @@ class Classinterest(models.Model):
         db_table = 'Classinterest'
 
 
-# CREATE TABLE InterestCode(code int, meaning char (100))
-# CREATE TABLE ClassInterest(student int, session , interestcode int)
-
-
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=80)
 

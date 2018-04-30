@@ -34,9 +34,6 @@ def isProfessor(user):
 
 def getUserId(request):
     if isProfessor(request.user):
-        # we're getting the student/professor object based on the email, but since it's not
-        # required to be unique, you could have two users with same email, which would throw
-        # an error
         user_id = Professors.objects.get(email=request.user.email).fid
     else:
         user_id = Students.objects.get(email=request.user.email).sid
@@ -82,8 +79,6 @@ def session(request, year, semester, cid):
         context = {'some_session': some_session, 'some_class': some_class,'year': year, 'semester': semester, 'tas': tas, 'profs': profs, 'mentorsessions': mentorsessions, 'name':request.user.first_name} # removed teach
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
-    # except Teach.DoesNotExist:
-    #     raise Http404("Teach entry does not exist")
     if request.user.groups.filter(name='Professors').exists():
         return render(request, 'takai/session_prof.html', context)
     else:
@@ -111,8 +106,6 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'takai/signup.html', {'form': form})
 
-# TODO: why doesn't this permission work?
-# @user_passes_test(isProfessor)
 class UpdateSession(UpdateView):
     model = Session
     template_name_suffix = '_edit_prof'
@@ -205,46 +198,36 @@ class DeleteTa(DeleteView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
-def TaApplication(request, year, semester): #or class (CreateView)
-    all_classes = Session.objects.filter(semester=semester, year=year)
-    num_classes = Session.objects.count() # filter by semester
-    classes = Session.objects.all() # filter by semester
+def TaApplication(request, year, semester):
+    if semester == "Fall":
+        next_semester = "Spring"
+        next_year = year + 1
+    else:
+        next_semester = "Fall"
+        next_year = year
 
+    all_classes = Session.objects.filter(semester=next_semester, year=next_year)
+    num_classes = Session.objects.filter(semester=next_semester, year=next_year).count()
     student = Students.objects.get(email=request.user.email)
 
-    # ClassinterestFormSet = modelformset_factory(Classinterest, form=ClassInterestForm, extra=num_classes)
     ClassinterestFormSet = formset_factory(ClassInterestForm, extra=num_classes, formset=BaseArticleFormSet)
-    # ClassinterestFormSet = ClassinterestFormSet2(form_kwargs={'student': student})
 
     if request.method == 'POST':
         appForm = ApplicationForm(request.POST)
         if appForm.is_valid():
             application = appForm.cleaned_data
-            # student = Students.objects.get(email=request.user.email)
-            # application['student'] = student
             application['student_id'] = getUserId(request)
-            if semester == "Fall":
-                application['semester'] = "Spring"
-                application['year'] = year + 1
-            else:
-                application['semester'] = "Fall"
-                application['year'] = year
-            # new_application = Application.objects.create(**application)
-            # new_application.save()
-
-                # ClassinterestFormSet = ClassinterestFormSet2(initial=[{'student':student,}])
+            application['semester'] = next_semester
+            application['year'] = next_year
 
             formset2 = ClassinterestFormSet(
             request.POST, request.FILES, initial=[{'student':student,}]
-            # queryset=Classinterest.objects.all(), # change to none? not sure
             )
 
             student = Students.objects.get(sid = getUserId(request))
             availability_list = request.POST.getlist('availabilitycode')
 
-
             if formset2.is_valid():
-                # interest_forms = formset2.save(commit=False)
                 new_application = Application.objects.create(**application)
                 new_application.save()
 
@@ -260,19 +243,18 @@ def TaApplication(request, year, semester): #or class (CreateView)
                     new_application.save()
             else:
                 availabilityForm = AvailabilityForm()
-                context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
+                context = {'all_classes':all_classes, 'year': next_year, 'semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
                 return render(request, 'takai/apply.html', context)
 
             return HttpResponseRedirect(reverse('semester', args = (year,semester)))
     else:
         initial2 = []
-        for sesh in classes:
+        for sesh in all_classes:
             initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
         classInterestForm = ClassinterestFormSet()
-        # classInterestForm = ClassinterestFormSet(initial=[{'sesh': sesh} for sesh in classes])
         availabilityForm = AvailabilityForm()
-        context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': classInterestForm,'formset3': availabilityForm}
+        context = {'all_classes':all_classes, 'year': next_year, 'semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': classInterestForm,'formset3': availabilityForm}
         return render(request, 'takai/apply.html', context)
 
 # Profile page

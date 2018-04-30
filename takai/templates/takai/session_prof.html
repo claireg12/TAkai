@@ -28,13 +28,11 @@
 {% for session in some_class.session_set.all %}
     <li>Lectures: {{ session.times }}</li>
     <li>Classroom: {{ session.classroom }}</li>
-    <!-- TODO: get rid of comma after last one // replaced it with line break -->
     <li>Professor(s):
         {% for prof in profs %}
             {{prof.professor.name}} <br/>
         {% endfor %}
     </li>
-    <!-- TODO: get rid of comma after last one // replaced it with line break-->
     <li>Office Hours:
         {% for prof in profs %}
             {{prof.professor.officehours}} <br/>
@@ -48,7 +46,6 @@
         {% endfor %}
         </ul>
     </li>
-    <!-- TODO: get rid of L suffix on id numbers (ie 23456789L) and change hardcoded id -->
     <li>TAs:
         <ul>
         {% for ta in tas %}
@@ -74,7 +71,5 @@
 </form>
 </div>
 
-<!-- <link rel="stylesheet" type="text/css" href="mystyle.css">
- -->
 </body>
 </html>

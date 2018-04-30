@@ -10,7 +10,6 @@ admin.site.register(Session)
 admin.site.register(Students)
 admin.site.register(Teach)
 admin.site.register(Host)
-#admin.site.register(Enroll)
 @admin.register(Enroll)
 class EnrollAdmin(admin.ModelAdmin):
 	list_display = ('student','session')
