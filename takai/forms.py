@@ -12,12 +12,7 @@ import pdb
 class SignUpForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
-        self.fields['password1'].help_text='Your password cannot be too similar to your other personal information, and cannot be a commonly used password. Your password must contain at least 8 characters and cannot be entirely numeric.' 
-
-        # self.fields['first'] = forms.IntegerField(max_value=max_values['first'])
-        # add custom error messages
-        # self.fields['graduation_year'].error_messages['unique'] = 'Please enter a valid graduation year.'
-        # self.fields['id_number'].error_messages['unique'] = 'Please enter a valid ID number.'
+        self.fields['password1'].help_text='Your password cannot be too similar to your other personal information, and cannot be a commonly used password. Your password must contain at least 8 characters and cannot be entirely numeric.'
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=254)
@@ -51,14 +46,6 @@ class AddMSInfo(forms.ModelForm):
         fields = ['time', 'day','location']
 
 class UpdateTaInfo(forms.ModelForm):
-
-    # def __init__(self, *args, **kwargs):
-    #     super(UpdateTaInfo, self).__init__(*args, **kwargs)
-
-    #     # add custom error messages
-    #     self.fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
-
-
     class Meta:
         model = Ta
         fields = ['student', 'bio']
@@ -86,29 +73,18 @@ class ApplicationForm(ModelForm):
 
 class BaseArticleFormSet(BaseFormSet):
     def clean(self):
-        """Checks that no two articles have the same title."""
-        # pdb.set_trace()
-        # super().clean()
-        # self.fields['student'] = self.initial
-        # pdb.set_trace()
-
         if any(self.errors):
             # Don't bother validating the formset unless each form is valid on its own
             return
         sessions = []
-        # pdb.set_trace()
         for form in self.forms:
-            # form.empty_permitted = False
             if not form.cleaned_data:
                 form.add_error('interestcode', 'Did not complete form')
             else:
                 session = form.cleaned_data['session']
-                # pdb.set_trace()
                 if session in sessions:
                     form.add_error('interestcode', 'Chose same class twice')
-                    # raise forms.ValidationError("Please select your level of interest for every class listed exactly once")
                 sessions.append(session)
-
 
 class AvailabilityForm(ModelForm):
     AVAILABILITY_CHOICES  = (
@@ -126,15 +102,8 @@ class AvailabilityForm(ModelForm):
         exclude = ['student']
 
 class ClassInterestForm(ModelForm):
-
-    # def __init__(self, *args, student, **kwargs):
-    #     self.student = student
-    #     super().__init__(*args, **kwargs)
-
     def __init__(self, *args, **kwargs):
         super(ClassInterestForm, self).__init__(*args, **kwargs)
-        # pdb.set_trace()
-        # self.fields['student'] = self.initial
 
     class Meta:
         model = Classinterest
@@ -144,4 +113,3 @@ class ClassInterestForm(ModelForm):
             'interestcode': ('Interest Level:'),
             'session':('Class'),
         }
-    

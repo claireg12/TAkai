@@ -19,22 +19,13 @@
 <div class="page-content">
 
 <h3> Search for TA's</h3>
-<form id="searchform" method="post"> <!--action="/takai/{{year}}{{semester}}/search/"-->
+<form id="searchform" method="post">
     {% csrf_token %}
      Available <select name= "availability">
        <option value="anyavail">any time</option>
        {% for availability in availabilities %}
           <option value={{availability.code}}>{{availability}}</option>
        {% endfor %}
-        <!-- <option value="monday">Monday</option>
-        <option value="tuesday">Tuesday</option>
-        <option value="wednesday">Wednesday</option>
-        <option value="thursday">Thursday</option>
-        <option value="friday">Friday</option>
-    </select>
-     at  <select name = "time">
-        <option value="1">2:45 - 4:00</option>
-        <option value="2">1:15-2:30</option> -->
     </select>
     and <select name = "interest">
       <option value="anyinterest">having any interest</option>

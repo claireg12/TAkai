@@ -7,10 +7,7 @@
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="{% static 'css/session.css' %}">
 
-<script src="jquery-3.3.1.min.js"></script>
-   <!-- doesn't work -->
 </head>
-<!-- <link rel="stylesheet" type="text/css" href="session.css"> -->
 <body>
 <div class = "login-header" style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
 
@@ -25,7 +22,7 @@
 <ul>
   {% for student in results %}
     {% for thing in student %}
-  <li><a href="/takai/{{thing.sid}}">{{thing.name}}</li> <!-- doesn't redirect to TA page right now -->
+  <li><a href="/takai/{{thing.sid}}">{{thing.name}}</li>
     {% endfor %}
    {% endfor %}
 </ul>

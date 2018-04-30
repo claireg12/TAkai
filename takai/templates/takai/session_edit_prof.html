@@ -1,3 +1,21 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{% static 'css/session.css' %}">
+
+</head>
+<body>
+<div class = "login-header" style="float:right"> Hi, {{name}}!   <a href="/takai/logout/">Logout</a> </div>
+
+<div class="page-header">
+    <h1><a href="/takai/">TAkai</a> </li>
+</div>
+
+<div class="page-content">
 
 {% block content %}
 
@@ -8,7 +26,11 @@
     {{ prof_form.as_table }}
     </table>
     <input type="submit" value="Submit" />
-    
+
 </form>
 
 {% endblock %}
+
+</div>
+</body>
+</html>
