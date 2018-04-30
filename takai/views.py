@@ -16,7 +16,6 @@ from django.contrib import messages
 from django.db.models import Q
 from django.views.generic.edit import FormMixin
 
-
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
 
@@ -235,7 +234,6 @@ def TaApplication(request, year, semester): #or class (CreateView)
         # queryset=Classinterest.objects.all(), # change to none? not sure
         )
 
-
         student = Students.objects.get(sid = getUserId(request))
         availability_list = request.POST.getlist('availabilitycode')
         for availability in availability_list:
@@ -244,11 +242,15 @@ def TaApplication(request, year, semester): #or class (CreateView)
 
         if formset2.is_valid():
             # interest_forms = formset2.save(commit=False)
-            for form in interest_forms:
+            for form in formset2:
                 clean_form = form.cleaned_data
+                clean_form['student_id'] = getUserId(request)
                 new_application = Classinterest.objects.create(**clean_form)
                 new_application.save()
-
+        else: 
+            availabilityForm = AvailabilityForm()
+            context = {'all_classes':all_classes, 'year': year, 'semester':semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
+            return render(request, 'takai/apply.html', context)
 
         return HttpResponseRedirect(reverse('semester', args = (year,semester)))
 
@@ -302,21 +304,10 @@ def adv_search(request, year, semester):
             students = []
             for result in results:
                 names.append(Students.objects.filter(sid=result).values_list('name')[0])
-<<<<<<< HEAD
-            # names = []
-            # for result in results:
-            #     names.append(result.name)
-            # pdb.set_trace()
-            #return render(request, 'takai/adv_search.html', context)
-            #blurb = 1
-            return searchresults(request, names)
-        #return render(request, 'takai/searchresults.html', {'results':results})
-=======
                 sids.append(Students.objects.filter(sid=result).values_list('sid')[0])
                 students.append(Students.objects.filter(sid=result))
             allresults = zip(names, sids)
             return render(request, 'takai/searchresults.html', {'name':request.user.first_name, 'results':students})
->>>>>>> fc3d4fac768dfc6e254745f3aefd10388e99f5a6
     except:
         raise Http404("Invalid Search")
 

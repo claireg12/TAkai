@@ -91,11 +91,17 @@ class BaseArticleFormSet(BaseFormSet):
         sessions = []
         # pdb.set_trace()
         for form in self.forms:
-            session = form.cleaned_data['session']
-            if session in sessions:
-                raise forms.ValidationError("Articles in a set must have distinct titles.")
-                pdb.set_trace()
-            sessions.append(sessions)
+            # form.empty_permitted = False
+            if not form.cleaned_data:
+                form.add_error('interestcode', 'Did not complete form')
+            else:
+                session = form.cleaned_data['session']
+                # pdb.set_trace()
+                if session in sessions:
+                    form.add_error('interestcode', 'Chose same class twice')
+                    # raise forms.ValidationError("Please select your level of interest for every class listed exactly once")
+                sessions.append(session)
+
 
 class AvailabilityForm(ModelForm):
     AVAILABILITY_CHOICES  = (
