@@ -29,9 +29,8 @@
 <div class="edit-pages" style="float:right"> <a href="{% url 'session-faculty-edit' year semester some_class.cid some_session.pk %}">Edit Class</a> </div>
 
 <ul>
-{% for session in some_class.session_set.all %}
-    <li>Lectures: {{ session.times }}</li>
-    <li>Classroom: {{ session.classroom }}</li>
+    <li>Lectures: {{ some_session.times }}</li>
+    <li>Classroom: {{ some_session.classroom }}</li>
     <li>Professor(s):
         {% for prof in profs %}
             {{prof.professor.name}} <br/>
@@ -47,7 +46,6 @@
         {% for mentorsesh in mentorsessions %}
             <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} </li>
              <div class = "edit-pages" style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
-        {% endfor %}
         </ul>
     </li>
     <li>TAs:
