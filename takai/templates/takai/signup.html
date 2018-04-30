@@ -1,3 +1,23 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css?family=Do+Hyeon" rel="stylesheet">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="{% static 'css/semester.css' %}">
+
+<script src="jquery-3.3.1.min.js"></script>
+</head>
+
+<body>
+  <!-- Takai Header -->
+  <div class="page-header">
+      <h1><a href="/takai/">TAkai</a></li>
+  </div>
+
+  <div class="page-content">
+
 {% block content %}
   <h2>Sign up</h2>
   <form method="post">
@@ -17,3 +37,6 @@
     <button type="submit">Sign up</button>
   </form>
 {% endblock %}
+
+</div>
+</body>
