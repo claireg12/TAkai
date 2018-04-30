@@ -37,6 +37,10 @@
                 {% csrf_token %}
                 <input type="button" disabled="True" value="Teaching">
             </form>
+            <form class = "form" action="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}/unteach/" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Unteach">
+            </form>
         </li>
     {% endfor %}
     </ul>

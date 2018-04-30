@@ -314,16 +314,17 @@ def adv_search(request, year, semester):
 def teach(request, year, semester, cid):
     prof = Professors.objects.get(fid=getUserId(request))
     session = Session.objects.get(theclass=cid)
-
-    # if (Teach.objects.filter(professor=prof, session=session)):
-    #     all_classes = Session.objects.filter(semester=semester, year=year)
-    #     my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
-    #     context = {'all_classes': all_classes, year: year, 'semester':semester, 'user_id' : prof.fid}
-    #     return render(request, 'takai/semester_prof.html', context)
-    # else:
-
     teaching = Teach.objects.create(professor = prof, session=session,)
     teaching.save()
+    return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+
+# When a professor wants to unteach a course
+@login_required
+def unteach(request, year, semester, cid):
+    prof = Professors.objects.get(fid=getUserId(request))
+    session = Session.objects.get(theclass=cid)
+    unteach = Teach.objects.filter(professor = prof, session=session,)
+    unteach.delete()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
 
 # When a student wants to enroll in a course
@@ -342,7 +343,21 @@ def enroll(request, year, semester, cid):
     enrollment.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
 
-    # return HttpResponseRedirect(reverse('semester', args = (year,semester)))
+# When a student wants to unenroll in a course
+@login_required
+def unenroll(request, year, semester, cid):
+    student = Students.objects.get(sid=getUserId(request))
+    session = Session.objects.get(theclass=cid)
+
+    # if (Enroll.objects.filter(student=student, session=session)):
+    #     all_classes = Session.objects.filter(semester=semester, year=year)
+    #     my_classes = Teach.objects.filter(session__semester=semester, session__year=year, professor__fid=getUserId(request))
+    #     context = {'all_classes': all_classes,'year': year, 'semester':semester, 'user_id' : student.sid}
+    #     return render(request, 'takai/semester.html', context)
+    # else:
+    unenrollment = Enroll.objects.filter(student = student, session=session,)
+    unenrollment.delete()
+    return HttpResponseRedirect(reverse('semester', args = (year,semester)))
 
 # How a prof assigns a TA to a class
 # If the student is not a TA yet, adds it as a TA and as a mentor for that class

@@ -52,7 +52,11 @@
                 {% csrf_token %}
                 <input type="button" disabled="True" value="Enrolled">
             </form>
-        </li>
+            <form class = "form" action="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}/unenroll/" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Unenroll">
+            </form>
+          </li>
     {% endfor %}
     {% for classes in mentor_classes %}
         <li><a href="/takai/{{year}}{{semester}}/{{classes.theclass.cid}}">CS{{ classes.theclass.cid }}: {{classes.theclass.name}} </a>
