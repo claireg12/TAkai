@@ -71,7 +71,7 @@ class ClassesForm(ModelForm):
 class ApplicationForm(ModelForm):
     class Meta:
         model = Application
-        fields = ['semester', 'year', 'school', 'major', 'qualities', 'num_hours_week']
+        fields = ['school', 'major', 'qualities', 'num_hours_week']
         labels = {
             'qualities': ('What qualities do you have that make you a good student mentor?'),
             'num_hours_week': ('Maximum number of hours available per week:'),

@@ -224,6 +224,12 @@ def TaApplication(request, year, semester): #or class (CreateView)
         if appForm.is_valid():
             application = appForm.cleaned_data
             application['student_id'] = getUserId(request)
+            if semester == "Fall":
+                application['semester'] = "Spring"
+                application['year'] = year + 1
+            else:
+                application['semester'] = "Fall"
+                application['year'] = year
             new_application = Application.objects.create(**application)
             new_application.save()
         formset2 = ClassinterestFormSet(
