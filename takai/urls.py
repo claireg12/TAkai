@@ -18,6 +18,9 @@ urlpatterns = [
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/enroll/$', views.enroll, name='session-enroll'),
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/teach/$', views.teach, name='session-teach'),
 
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/unenroll/$', views.unenroll, name='session-unenroll'),
+    url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/unteach/$', views.unteach, name='session-unteach'),
+
     # session for professors (can add TAs)
     url(r'^(?P<year>[0-9]{4})(?P<semester>[A-Za-z]+)/(?P<cid>[0-9]+)/prof/$', views.prof, name='session-prof'),
 

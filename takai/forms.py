@@ -56,6 +56,7 @@ class UpdateTaInfo(forms.ModelForm):
     #     # add custom error messages
     #     self.fields['student'].error_messages['unique'] = 'You do not have permission to edit this TA.'
 
+
     class Meta:
         model = Ta
         fields = ['student', 'bio']
@@ -75,7 +76,11 @@ class ClassesForm(ModelForm):
 class ApplicationForm(ModelForm):
     class Meta:
         model = Application
-        fields = ['semester', 'year', 'school', 'major', 'qualities', 'num_hours_week']
+        fields = ['school', 'major', 'qualities', 'num_hours_week']
+        labels = {
+            'qualities': ('What qualities do you have that make you a good student mentor?'),
+            'num_hours_week': ('Maximum number of hours available per week:'),
+        }
 
 class BaseArticleFormSet(BaseFormSet):
     def clean(self):

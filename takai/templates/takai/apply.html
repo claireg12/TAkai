@@ -16,29 +16,29 @@
 
 <div class="page-content">
   <h1> TA Application </h1>
-
+  <h5> <font color="red"> All fields are required </font></h5>
 <p>
     <form method="post" action="">
     {% csrf_token %}
      <table>
      {{ formset1.as_table }}
      </table>
-     </br>
-     Please indicate your interest level for TAing each class. </br>
+     <br>
+     Please indicate your interest level for TAing each class. <br>
     {{ formset2.management_form }}
     {% for form in formset2%}
         {{form.session.label_tag}} {{form.session}}
-        {{form.interestcode.label_tag}} {{form.interestcode}} <br/>
+        {{form.interestcode.label_tag}} {{form.interestcode}} <br>
     {% endfor %}
 
     {% if formset2.errors %}
       <li><strong><font color="red">Please make sure you select your level of interest for every class listed exactly once</font></strong></li>
     {% endif %}
 
-    </br>
+    <br>
     Please select all labs times for which you are available
      {{ formset3}}
-    <input type="submit" value="Submit" />
+    <input type="submit" value="Submit" >
     </form>
 
 </p>
