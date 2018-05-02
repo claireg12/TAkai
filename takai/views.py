@@ -354,7 +354,10 @@ def prof(request, year, semester, cid):
             assignment1 = Ta.objects.create(student = student,)
             assignment1.save()
         ta = Ta.objects.get(student=student)
-        assignment2 = Mentor.objects.create(ta = ta, session=session1,)
-        assignment2.save()
+        if (Mentor.objects.filter(ta=ta, session=session1).exists()):
+            return session(request, year, semester, cid)
+        else:
+            assignment2 = Mentor.objects.create(ta = ta, session=session1,)
+            assignment2.save()
 
     return session(request, year, semester, cid)
