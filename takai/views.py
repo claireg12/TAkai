@@ -256,9 +256,6 @@ def TaApplication(request, year, semester):
 
             return HttpResponseRedirect(reverse('semester', args = (year,semester)))
     else:
-        initial2 = []
-        for sesh in all_classes:
-            initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
         classInterestForm = ClassinterestFormSet()
         for form in classInterestForm:
@@ -313,7 +310,7 @@ def adv_search(request, year, semester):
 @login_required
 def teach(request, year, semester, cid):
     prof = Professors.objects.get(fid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     teaching = Teach.objects.create(professor = prof, session=session,)
     teaching.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -322,7 +319,7 @@ def teach(request, year, semester, cid):
 @login_required
 def unteach(request, year, semester, cid):
     prof = Professors.objects.get(fid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     unteach = Teach.objects.filter(professor = prof, session=session,)
     unteach.delete()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -331,7 +328,7 @@ def unteach(request, year, semester, cid):
 @login_required
 def enroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     enrollment = Enroll.objects.create(student = student, session=session,)
     enrollment.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -340,7 +337,7 @@ def enroll(request, year, semester, cid):
 @login_required
 def unenroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     unenrollment = Enroll.objects.filter(student = student, session=session,)
     unenrollment.delete()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
