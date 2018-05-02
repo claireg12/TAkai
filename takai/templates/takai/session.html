@@ -38,6 +38,7 @@
                 <div class = "edit-pages" id="edit_ms" style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
             {% endif %}
             <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} </li>
+        {% endfor %}
         </ul>
     </li>
     <li>TAs:
@@ -64,7 +65,6 @@
         {% endfor %}
         </ul>
     </li>
-{% endfor %}
 </ul>
 </div>
 

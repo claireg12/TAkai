@@ -120,10 +120,15 @@ class UpdateSession(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(UpdateSession, self).get_context_data(**kwargs)
         session_id = self.kwargs['pk']
-        teaches = Teach.objects.get(session=session_id)
-        some_professor = teaches.professor
-        context['Professors'] = Professors.objects.get(fid=teaches.professor.fid)
-        context['prof_form'] = self.second_form_class(instance=some_professor)
+        try:
+            teaches = Teach.objects.get(session=session_id)
+            some_professor = teaches.professor
+            context['Professors'] = Professors.objects.get(fid=teaches.professor.fid)
+            context['prof_form'] = self.second_form_class(instance=some_professor)
+        except Teach.DoesNotExist:
+            teaches = set()
+            context['Professors'] = set()
+            context['prof_form'] = set()
         return context
 
     def post(self, request, *args, **kwargs):
