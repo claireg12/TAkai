@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.db.models import Q
 from django.views.generic.edit import FormMixin
+from django.db.models.query import QuerySet
 
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
@@ -72,11 +73,13 @@ def session(request, year, semester, cid):
     try:
         some_class = Classes.objects.get(pk=cid)
         some_session = Session.objects.get(theclass=cid, semester=semester, year=year)
-        tas = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
+        mentors = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         profs = Teach.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
-        mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
+        #get tas to filter host objects
+        tas = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year).values_list('ta', flat = True)
+        mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year, ta__in = tas)
 
-        context = {'some_session': some_session, 'some_class': some_class,'year': year, 'semester': semester, 'tas': tas, 'profs': profs, 'mentorsessions': mentorsessions, 'name':request.user.first_name} # removed teach
+        context = {'some_session': some_session, 'some_class': some_class,'year': year, 'semester': semester, 'tas': mentors, 'profs': profs, 'mentorsessions': mentorsessions, 'name':request.user.first_name} # removed teach
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
     if request.user.groups.filter(name='Professors').exists():
@@ -120,10 +123,15 @@ class UpdateSession(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(UpdateSession, self).get_context_data(**kwargs)
         session_id = self.kwargs['pk']
-        teaches = Teach.objects.get(session=session_id)
-        some_professor = teaches.professor
-        context['Professors'] = Professors.objects.get(fid=teaches.professor.fid)
-        context['prof_form'] = self.second_form_class(instance=some_professor)
+        try:
+            teaches = Teach.objects.get(session=session_id)
+            some_professor = teaches.professor
+            context['Professors'] = Professors.objects.get(fid=teaches.professor.fid)
+            context['prof_form'] = self.second_form_class(instance=some_professor)
+        except Teach.DoesNotExist:
+            teaches = set()
+            context['Professors'] = set()
+            context['prof_form'] = set()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -250,9 +258,6 @@ def TaApplication(request, year, semester):
 
             return HttpResponseRedirect(reverse('semester', args = (year,semester)))
     else:
-        initial2 = []
-        for sesh in all_classes:
-            initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
         classInterestForm = ClassinterestFormSet()
         for form in classInterestForm:
@@ -307,7 +312,7 @@ def adv_search(request, year, semester):
 @login_required
 def teach(request, year, semester, cid):
     prof = Professors.objects.get(fid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     teaching = Teach.objects.create(professor = prof, session=session,)
     teaching.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -316,7 +321,7 @@ def teach(request, year, semester, cid):
 @login_required
 def unteach(request, year, semester, cid):
     prof = Professors.objects.get(fid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     unteach = Teach.objects.filter(professor = prof, session=session,)
     unteach.delete()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -325,7 +330,7 @@ def unteach(request, year, semester, cid):
 @login_required
 def enroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     enrollment = Enroll.objects.create(student = student, session=session,)
     enrollment.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -334,7 +339,7 @@ def enroll(request, year, semester, cid):
 @login_required
 def unenroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     unenrollment = Enroll.objects.filter(student = student, session=session,)
     unenrollment.delete()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))

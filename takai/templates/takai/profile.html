@@ -28,6 +28,7 @@
 <br>
 <h4><u>All Applications</u></h4>
 <ul>
+	{%if apps %}
 	{% for app in apps %}
 	<li> Basic Info: </li>
 		<ul>
@@ -53,6 +54,9 @@
 	{% for interest in interests %}
 		<li> {{interest}} </li>
 	{% endfor %}
+	{% else %}
+		No past applications.
+	{% endif %}
 </ul>
 </ul>
 
