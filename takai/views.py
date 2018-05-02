@@ -123,10 +123,15 @@ class UpdateSession(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(UpdateSession, self).get_context_data(**kwargs)
         session_id = self.kwargs['pk']
-        teaches = Teach.objects.get(session=session_id)
-        some_professor = teaches.professor
-        context['Professors'] = Professors.objects.get(fid=teaches.professor.fid)
-        context['prof_form'] = self.second_form_class(instance=some_professor)
+        try:
+            teaches = Teach.objects.get(session=session_id)
+            some_professor = teaches.professor
+            context['Professors'] = Professors.objects.get(fid=teaches.professor.fid)
+            context['prof_form'] = self.second_form_class(instance=some_professor)
+        except Teach.DoesNotExist:
+            teaches = set()
+            context['Professors'] = set()
+            context['prof_form'] = set()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -252,14 +257,13 @@ def TaApplication(request, year, semester):
                     new_application.save()
             else:
                 availabilityForm = AvailabilityForm()
+                for form in formset2:
+                    form.fields["session"].queryset = all_classes
                 context = {'all_classes':all_classes, 'cur_year':year, 'cur_semester':semester, 'next_year': next_year, 'next_semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
                 return render(request, 'takai/apply.html', context)
 
             return HttpResponseRedirect(reverse('semester', args = (year,semester)))
     else:
-        initial2 = []
-        for sesh in all_classes:
-            initial2.append({'sesh': sesh})
         appForm = ApplicationForm()
         classInterestForm = ClassinterestFormSet()
         for form in classInterestForm:
@@ -314,7 +318,7 @@ def adv_search(request, year, semester):
 @login_required
 def teach(request, year, semester, cid):
     prof = Professors.objects.get(fid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     teaching = Teach.objects.create(professor = prof, session=session,)
     teaching.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -323,7 +327,7 @@ def teach(request, year, semester, cid):
 @login_required
 def unteach(request, year, semester, cid):
     prof = Professors.objects.get(fid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     unteach = Teach.objects.filter(professor = prof, session=session,)
     unteach.delete()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -332,7 +336,7 @@ def unteach(request, year, semester, cid):
 @login_required
 def enroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     enrollment = Enroll.objects.create(student = student, session=session,)
     enrollment.save()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -341,7 +345,7 @@ def enroll(request, year, semester, cid):
 @login_required
 def unenroll(request, year, semester, cid):
     student = Students.objects.get(sid=getUserId(request))
-    session = Session.objects.get(theclass=cid)
+    session = Session.objects.get(theclass=cid, semester=semester, year=year)
     unenrollment = Enroll.objects.filter(student = student, session=session,)
     unenrollment.delete()
     return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -361,7 +365,10 @@ def prof(request, year, semester, cid):
             assignment1 = Ta.objects.create(student = student,)
             assignment1.save()
         ta = Ta.objects.get(student=student)
-        assignment2 = Mentor.objects.create(ta = ta, session=session1,)
-        assignment2.save()
+        if (Mentor.objects.filter(ta=ta, session=session1).exists()):
+            return session(request, year, semester, cid)
+        else:
+            assignment2 = Mentor.objects.create(ta = ta, session=session1,)
+            assignment2.save()
 
     return session(request, year, semester, cid)
