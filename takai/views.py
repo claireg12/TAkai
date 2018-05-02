@@ -243,6 +243,8 @@ def TaApplication(request, year, semester):
                     new_application.save()
             else:
                 availabilityForm = AvailabilityForm()
+                for form in formset2:
+                    form.fields["session"].queryset = all_classes
                 context = {'all_classes':all_classes, 'cur_year':year, 'cur_semester':semester, 'next_year': next_year, 'next_semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
                 return render(request, 'takai/apply.html', context)
 
