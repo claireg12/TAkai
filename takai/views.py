@@ -243,7 +243,7 @@ def TaApplication(request, year, semester):
                     new_application.save()
             else:
                 availabilityForm = AvailabilityForm()
-                context = {'all_classes':all_classes, 'year':year, 'semester':semester, 'next_year': next_year, 'next_semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
+                context = {'all_classes':all_classes, 'cur_year':year, 'cur_semester':semester, 'next_year': next_year, 'next_semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': formset2,'formset3': availabilityForm}
                 return render(request, 'takai/apply.html', context)
 
             return HttpResponseRedirect(reverse('semester', args = (year,semester)))
@@ -256,7 +256,7 @@ def TaApplication(request, year, semester):
         for form in classInterestForm:
             form.fields["session"].queryset = all_classes
         availabilityForm = AvailabilityForm()
-        context = {'all_classes':all_classes, 'year': next_year, 'semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': classInterestForm,'formset3': availabilityForm}
+        context = {'all_classes':all_classes, 'cur_year':year, 'cur_semester':semester, 'next_year': next_year, 'next_semester': next_semester,'name':request.user.first_name, 'formset1': appForm, 'formset2': classInterestForm,'formset3': availabilityForm}
         return render(request, 'takai/apply.html', context)
 
 # Profile page
