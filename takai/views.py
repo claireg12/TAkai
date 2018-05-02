@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.db.models import Q
 from django.views.generic.edit import FormMixin
+from django.db.models.query import QuerySet
 
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
@@ -72,11 +73,13 @@ def session(request, year, semester, cid):
     try:
         some_class = Classes.objects.get(pk=cid)
         some_session = Session.objects.get(theclass=cid, semester=semester, year=year)
-        tas = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
+        mentors = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
         profs = Teach.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
-        mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year)
+        #get tas to filter host objects
+        tas = Mentor.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year).values_list('ta', flat = True)
+        mentorsessions = Host.objects.filter(session__theclass = some_class, session__semester = semester, session__year = year, ta__in = tas)
 
-        context = {'some_session': some_session, 'some_class': some_class,'year': year, 'semester': semester, 'tas': tas, 'profs': profs, 'mentorsessions': mentorsessions, 'name':request.user.first_name} # removed teach
+        context = {'some_session': some_session, 'some_class': some_class,'year': year, 'semester': semester, 'tas': mentors, 'profs': profs, 'mentorsessions': mentorsessions, 'name':request.user.first_name} # removed teach
     except Classes.DoesNotExist:
         raise Http404("Class does not exist")
     if request.user.groups.filter(name='Professors').exists():
