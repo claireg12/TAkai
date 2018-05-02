@@ -40,7 +40,17 @@
             {% if mentorsesh.ta.student.email == user.email %}
                 <div class = "edit-pages" id="edit_ms" style="float:right"> <a href="{% url 'session-mentor-edit' year semester some_class.cid mentorsesh.mentorsesh.pk %}">Edit Mentor Session</a> </div>
             {% endif %}
-            <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} </li>
+            <li>{{mentorsesh.mentorsesh.day}}, {{mentorsesh.mentorsesh.time}}, {{mentorsesh.mentorsesh.location}}, {{mentorsesh.ta.student.name}} 
+            {% if mentorsesh.ta.student.email == user.email %}
+            	<form action ="{% url 'session-mentor-delete' year semester some_class.cid some_session.pk mentorsesh.mentorsesh.pk%}" method = "post" style = "display: inline;">
+                {% csrf_token %}
+                <input type = "hidden" name = "mentorsessions_id" value = "{{mentorsesh.mentorsesh.pk}}"/>
+                <button type = "submit" class = "btn btn-default btn-sm">
+                    <span class = "glyphicon glyphicon-trash"></span>
+                </button>
+            	</form>
+            {% endif %}
+            </li>
         {% endfor %}
         </ul>
     </li>

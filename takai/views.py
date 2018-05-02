@@ -201,6 +201,12 @@ class DeleteTa(DeleteView):
     def get_success_url(self):
         return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
 
+class DeleteMentorSession(DeleteView):
+    model = Mentorsessions
+
+    def get_success_url(self):
+        return reverse_lazy('session', args = (self.kwargs['year'],self.kwargs['semester'],self.kwargs['cid']))
+
 def TaApplication(request, year, semester):
     if semester == "Fall":
         next_semester = "Spring"
